@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2449fe14e86fe274e8d0855df804a2ee, type: 3}
+  m_Name: Bread
+  m_EditorClassIdentifier: 
+  Name: Bread
+  Description: Freshly baked bread.
+  BasePrice: 10
+  Weight: 2
+  Icon: {fileID: 21300000, guid: c3c2d89267020714698f9ef3d2e5a87e, type: 3}
