@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Reflection;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,7 +25,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameData gameData;
 
-
+    // Systems Controllers
+    private TimeController timeController;
 
     private void Awake()
     {
@@ -36,54 +38,54 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SetStartingData();
-        StartCoroutine(PushOutStartingData());
+        timeController = new TimeController(gameData, DateTime.Now);
+        StartCoroutine(LoadDataFromFile());
     }
 
-    private void SetStartingData()
+    private void Update()
     {
-        gameData.Gold = 55;
-        gameData.AnimalWeight = 100f;
+        timeController.DoUpdate(Time.deltaTime);
     }
 
-    private IEnumerator PushOutStartingData()
+    private void OnApplicationQuit()
+    {
+        gameData.OnApplicationQuit();
+        SaveController.Save(gameData);
+    }
+
+    private IEnumerator LoadDataFromFile()
     {
         yield return new WaitForEndOfFrame();
 
-        InvokeOnFoodModiferChanged(gameData.goldCostModifier, gameData.weightModifier);
-        InvokeOnGoldAmountChanged(gameData.Gold);
-        InvokeOnAnimalWeightChanged(gameData.AnimalWeight);
+        SaveController.Load(gameData);
+
+        gameData.OnApplicationOpen();        
+
+        if (gameData.IsExistingUser)
+            ShowWelcomeBackData();
+    }
+
+    private void ShowWelcomeBackData()
+    {
+        var dateDifference = DateTime.Now - gameData.LastAppClosedTime;
+        var goldEarned = Mathf.Min(gameData.MaxGoldPerOfflinePeriod, Mathf.FloorToInt((float)(dateDifference.TotalMinutes * gameData.GoldRatePerMinute)));
+
+        gameData.Gold += goldEarned;
+
+        UIManager.Instance.OpenDialog(DialogTypeEnum.WelcomeBack,
+            DateUtils.GetFriendlyTimeSpan(dateDifference),
+            goldEarned.ToString()
+            );
     }
 
     #region Events
 
-    public Action<int> OnGoldAmountChanged;
-    public void InvokeOnGoldAmountChanged(int amount)
-    {
-        if (OnGoldAmountChanged != null)
-            OnGoldAmountChanged.Invoke(amount);
-    }
-
-    public Action<float> OnAnimalWeightChanged;
-    public void InvokeOnAnimalWeightChanged(float animalWeight)
-    {
-        if (OnAnimalWeightChanged != null)
-            OnAnimalWeightChanged.Invoke(animalWeight);
-    }
-
-    public Action<float, float> OnFoodModiferChanged;
-    public void InvokeOnFoodModiferChanged(float costModifier, float weightModifier)
-    {
-        if (OnFoodModiferChanged != null)
-            OnFoodModiferChanged.Invoke(costModifier, weightModifier);
-    }
-
     public void OnShopItemPurchased(ShopItem item, Transform startingLocation)
     {
-        if (gameData.Gold >= item.RelativePrice(gameData.goldCostModifier))
+        if (gameData.Gold >= item.RelativePrice(gameData.GoldCostModifier))
         {
-            gameData.Gold -= item.RelativePrice(gameData.goldCostModifier);
-            gameData.AnimalWeight += Mathf.FloorToInt(item.Weight * gameData.weightModifier);
+            gameData.Gold -= item.RelativePrice(gameData.GoldCostModifier);
+            gameData.AnimalWeight += Mathf.FloorToInt(item.Weight * gameData.WeightModifier);
         }
         else // sanity check to make sure we can actually do this, if not we will fire the change event again
         {

@@ -7,7 +7,7 @@ using TMPro;
 [RequireComponent(typeof(UICustomButton))]
 public class UIButton_MenuNav : MonoBehaviour
 {
-    public UIMenuContent content;
+    public RectTransform menuContent;
 
     private Button button;
 

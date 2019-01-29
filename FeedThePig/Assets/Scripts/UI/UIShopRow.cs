@@ -23,6 +23,7 @@ public class UIShopRow : MonoBehaviour, IIntializeInactive
     private Button buyButton;
 
     private float cachedCostModifier;
+    private float cachedWeightModifier;
 
     public void ForceAwake()
     {
@@ -32,8 +33,11 @@ public class UIShopRow : MonoBehaviour, IIntializeInactive
 
     public void ForceStart()
     {
-        GameManager.Instance.OnGoldAmountChanged += OnGoldAmountChanged;
-        GameManager.Instance.OnFoodModiferChanged += OnFoodModifierChanged;
+        Events.Register<int>(GameEventsEnum.Gold, OnGoldAmountChanged);
+        Events.Register<float>(GameEventsEnum.GoldCostModifier, OnGoldCostModifierChanged);
+        Events.Register<float>(GameEventsEnum.WeightModifier, OnWeightModifierChanged);
+        //GameManager.Instance.OnGoldAmountChanged += OnGoldAmountChanged;
+       // GameManager.Instance.OnFoodModiferChanged += OnFoodModifierChanged;
     }
 
     
@@ -51,14 +55,20 @@ public class UIShopRow : MonoBehaviour, IIntializeInactive
         buyButton.interactable = gold < item.RelativePrice(cachedCostModifier) ? false : true;
     }
 
-    private void OnFoodModifierChanged(float costModifier, float weightModifier)
+    private void OnGoldCostModifierChanged(float costModifier)
     {
-        UpdateUI(costModifier, weightModifier);
+        UpdateUI(costModifier, cachedWeightModifier);
+    }
+
+    private void OnWeightModifierChanged(float weightModifier)
+    {
+        UpdateUI(cachedCostModifier, weightModifier);
     }
 
     private void UpdateUI(float costModifier = 1f, float weightModifier = 1f)
     {
         cachedCostModifier = costModifier;
+        cachedWeightModifier = weightModifier;
 
         Icon.sprite = item.Icon;
         titleText.text = item.name;

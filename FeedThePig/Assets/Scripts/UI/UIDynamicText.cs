@@ -8,6 +8,8 @@ public class UIDynamicText : MonoBehaviour
     [SerializeField]
     private string label;
     [SerializeField]
+    private string suffix;
+    [SerializeField]
     private TextMeshProUGUI text;
 
     private void OnValidate()
@@ -17,7 +19,7 @@ public class UIDynamicText : MonoBehaviour
 
     public void UpdateContent(string content)
     {
-        text.text = string.Format("{0}{1}", label, content);
+        text.text = string.Format("{0}{1}{2}", label, content, suffix);
     }
 
     public void UpdateContent(int content)

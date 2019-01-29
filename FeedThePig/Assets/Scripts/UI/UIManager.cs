@@ -45,10 +45,10 @@ public class UIManager : MonoBehaviour
 
         foreach (var item in navButtons)
         {
-            item.content.gameObject.SetActive(false);
+            item.menuContent.gameObject.SetActive(false);
         }
         
-        button.content.gameObject.SetActive(true);
+        button.menuContent.gameObject.SetActive(true);
     }
 
     #region Manage Dialog Stack
@@ -84,7 +84,8 @@ public class UIManager : MonoBehaviour
 public enum DialogTypeEnum
 {
     NotSet,
-    AnimalSale
+    AnimalSale,
+    WelcomeBack
 }
 
 public enum CustomButtonTypeEnum

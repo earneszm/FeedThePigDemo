@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30945dafb2a8a9d479cf7b0f2aead8a1, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
-  gold: 55
+  isExistingUser: 1
+  gold: 1141
   animalWeight: 100
-  goldPerWeightPrice: 0.2
   goldCostModifier: 0.5
-  weightModifier: 1.5
+  weightModifier: 1
+  goldRatePerMinute: 10
+  goldPerWeightPrice: 0.2
+  maxGoldPerOfflinePeriod: 5000
+  lastLoginTime: 636843135424355054
+  lastAppClosedTime: 636843135645772392
