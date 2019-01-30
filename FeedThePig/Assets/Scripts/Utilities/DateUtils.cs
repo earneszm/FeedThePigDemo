@@ -17,6 +17,9 @@ public static class DateUtils
         if (value.Days > 0)
             returnString += value.Days + " days, ";
 
+        if (value.Hours > 0)
+            returnString += value.Hours + " hours, ";
+
         if (value.Minutes > 0)
             returnString += value.Minutes + " minutes, ";
 

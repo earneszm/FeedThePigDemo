@@ -22,6 +22,8 @@ public class UIShopRow : MonoBehaviour, IIntializeInactive
 
     private Button buyButton;
 
+    private int cachedGoldAmount;
+    private float cachedWeightAmount;
     private float cachedCostModifier;
     private float cachedWeightModifier;
 
@@ -34,10 +36,9 @@ public class UIShopRow : MonoBehaviour, IIntializeInactive
     public void ForceStart()
     {
         Events.Register<int>(GameEventsEnum.Gold, OnGoldAmountChanged);
+        Events.Register<float>(GameEventsEnum.AnimalWeight, OnAnimalWeightChanged);
         Events.Register<float>(GameEventsEnum.GoldCostModifier, OnGoldCostModifierChanged);
         Events.Register<float>(GameEventsEnum.WeightModifier, OnWeightModifierChanged);
-        //GameManager.Instance.OnGoldAmountChanged += OnGoldAmountChanged;
-       // GameManager.Instance.OnFoodModiferChanged += OnFoodModifierChanged;
     }
 
     
@@ -52,7 +53,27 @@ public class UIShopRow : MonoBehaviour, IIntializeInactive
 
     private void OnGoldAmountChanged(int gold)
     {
-        buyButton.interactable = gold < item.RelativePrice(cachedCostModifier) ? false : true;
+        cachedGoldAmount = gold;
+        UpdateInteractable();
+    }
+
+    private void OnAnimalWeightChanged(float weight)
+    {
+        cachedWeightAmount = weight;
+        UpdateInteractable();
+    }
+
+    private void UpdateInteractable()
+    {
+        bool interactable = true;
+
+        if (cachedGoldAmount < item.RelativePrice(cachedCostModifier))
+            interactable = false;
+
+        if (cachedWeightAmount >= GameConstants.MaxAnimalWeight)
+            interactable = false;
+
+        buyButton.interactable = interactable;
     }
 
     private void OnGoldCostModifierChanged(float costModifier)

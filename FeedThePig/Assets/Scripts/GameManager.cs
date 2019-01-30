@@ -12,18 +12,12 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Transform spawnLocation;
 
-    // UI Effects Stuff
-    [SerializeField]
-    private GameObject flyingItemPrefab;
-    [SerializeField]
-    private RectTransform feedTarget;
-    [SerializeField]
-    private GameObject effectsCanvas;
-
 
     // Data
     [SerializeField]
     private GameData gameData;
+
+    private EffectsManager effectsManager;
 
     // Systems Controllers
     private TimeController timeController;
@@ -38,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        effectsManager = GetComponent<EffectsManager>();
         timeController = new TimeController(gameData, DateTime.Now);
         StartCoroutine(LoadDataFromFile());
     }
@@ -59,7 +54,7 @@ public class GameManager : MonoBehaviour
 
         SaveController.Load(gameData);
 
-        gameData.OnApplicationOpen();        
+        gameData.OnApplicationOpen();
 
         if (gameData.IsExistingUser)
             ShowWelcomeBackData();
@@ -69,12 +64,16 @@ public class GameManager : MonoBehaviour
     {
         var dateDifference = DateTime.Now - gameData.LastAppClosedTime;
         var goldEarned = Mathf.Min(gameData.MaxGoldPerOfflinePeriod, Mathf.FloorToInt((float)(dateDifference.TotalMinutes * gameData.GoldRatePerMinute)));
+        var weightGained = Mathf.Min(gameData.MaxWeightPerOfflinePeriod, (float)(dateDifference.TotalMinutes * gameData.WeightRatePerMinute));
 
         gameData.Gold += goldEarned;
+        gameData.Animal.AnimalWeight += weightGained;
+        gameData.TotalWeightAcquired += weightGained;
 
         UIManager.Instance.OpenDialog(DialogTypeEnum.WelcomeBack,
             DateUtils.GetFriendlyTimeSpan(dateDifference),
-            goldEarned.ToString()
+            goldEarned.ToString(),
+            weightGained.ToString("N2")
             );
     }
 
@@ -85,7 +84,11 @@ public class GameManager : MonoBehaviour
         if (gameData.Gold >= item.RelativePrice(gameData.GoldCostModifier))
         {
             gameData.Gold -= item.RelativePrice(gameData.GoldCostModifier);
-            gameData.AnimalWeight += Mathf.FloorToInt(item.Weight * gameData.WeightModifier);
+
+            var weightToAdd = Mathf.Min(Mathf.FloorToInt(item.Weight * gameData.WeightModifier), GameConstants.MaxAnimalWeight);
+            gameData.Animal.AnimalWeight += weightToAdd;
+            gameData.TotalWeightAcquired += weightToAdd;
+            gameData.TotalFoodBought++;
         }
         else // sanity check to make sure we can actually do this, if not we will fire the change event again
         {
@@ -93,23 +96,19 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // animate icon going to animal
-        var newEffect = Instantiate(flyingItemPrefab, startingLocation.transform.position, Quaternion.identity, effectsCanvas.transform);
-        var move = newEffect.GetComponent<MoveToTargetAndFade>();
-        newEffect.GetComponentInChildren<Image>().sprite = item.Icon;
-        move.target = feedTarget;
-        move.StartMoving();
+        effectsManager.LaunchItem(startingLocation, item.Icon);
     }
 
     public void OnSellAnimal()
     {
-        var goldAmountFromSale = Mathf.FloorToInt(gameData.AnimalWeight * gameData.goldPerWeightPrice);
-        var saleWeight = gameData.AnimalWeight;
+        var goldAmountFromSale = Mathf.FloorToInt(gameData.Animal.AnimalWeight * gameData.goldPerWeightPrice);
+        var saleWeight = gameData.Animal.AnimalWeight;
 
         gameData.Gold += goldAmountFromSale;
-        gameData.AnimalWeight = 100f;
+        gameData.AnimalsSold++;
+        gameData.Animal.AnimalWeight = 100f;
 
-        UIManager.Instance.OpenDialog(DialogTypeEnum.AnimalSale, saleWeight.ToString(), goldAmountFromSale.ToString());
+        UIManager.Instance.OpenDialog(DialogTypeEnum.AnimalSale, saleWeight.ToString("N2"), goldAmountFromSale.ToString());
     }
 
     #endregion

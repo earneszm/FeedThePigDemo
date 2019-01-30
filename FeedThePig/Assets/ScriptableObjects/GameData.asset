@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: GameData
   m_EditorClassIdentifier: 
   isExistingUser: 1
-  gold: 1141
-  animalWeight: 100
+  gold: 3605
+  animalsSold: 0
+  goldPerWeightPrice: 0.2
   goldCostModifier: 0.5
   weightModifier: 1
   goldRatePerMinute: 10
-  goldPerWeightPrice: 0.2
   maxGoldPerOfflinePeriod: 5000
-  lastLoginTime: 636843135424355054
-  lastAppClosedTime: 636843135645772392
+  lastLoginTime: 636843957666997143
+  lastAppClosedTime: 636843970094234989
+  Animal:
+    animalType: 0
+    animalWeight: 100

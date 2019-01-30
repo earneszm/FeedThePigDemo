@@ -8,14 +8,14 @@ public static class Events
 {
     private static Dictionary<GameEventsEnum, EventControllerBase> actionList = new Dictionary<GameEventsEnum, EventControllerBase>();
 
-    public static void OnChange<T>(T data, GameEventsEnum name) where T : struct
+    public static void OnChange<T>(T data, GameEventsEnum name)// where T : struct
     {
         AddIfNotExists<T>(name);
 
         actionList[name].Raise(data);
     }
 
-    public static void Register<T>(GameEventsEnum name, Action<T> callback) where T : struct
+    public static void Register<T>(GameEventsEnum name, Action<T> callback)// where T : struct
     {
         AddIfNotExists<T>(name);
 
@@ -79,5 +79,9 @@ public enum GameEventsEnum
     AnimalWeight,
     GoldCostModifier,
     WeightModifier,
-    GoldProduction
+    GoldProduction,
+    AnimalSold,
+    TotalFoodBought,
+    TotalWeightAcquired,
+    WeightProduction
 }
