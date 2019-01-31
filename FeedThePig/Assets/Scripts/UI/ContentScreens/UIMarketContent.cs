@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIMarket : MonoBehaviour
+public class UIMarketContent : MonoBehaviour
 {
     [SerializeField]
     private Button sellAnimalButton;

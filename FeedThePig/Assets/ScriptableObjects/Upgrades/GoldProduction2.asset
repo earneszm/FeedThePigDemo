@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: Cake
-  m_EditorClassIdentifier: Assembly-CSharp::FoodShopItem
-  Name: Cake
-  Description: Moist cake.
-  BasePrice: 50
-  Icon: {fileID: 21300000, guid: 98a58e01ddab0a8439de906056f2cdb1, type: 3}
+  m_Name: GoldProduction2
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeShopItem
+  Name: Gold Production 2
+  Description: Increase offline gold production by {0}.
+  BasePrice: 500
+  Icon: {fileID: 21300000, guid: 16264090f5e803a488d61b446cf4521e, type: 3}
   IsActive: 1
-  Weight: 25
+  UpgradeType: 1
+  Value: 20

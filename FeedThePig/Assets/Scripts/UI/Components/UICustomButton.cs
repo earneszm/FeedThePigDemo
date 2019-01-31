@@ -34,13 +34,14 @@ public class UICustomButton : MonoBehaviour, IIntializeInactive
     }
 
     public void ForceStart()
-    {        
-    }
-
-    private void Start()
     {
         Button.onClick.AddListener(OnClick);
     }
+
+   // private void Start()
+   // {
+   //     
+   // }
 
     public virtual void OnClick()
     {

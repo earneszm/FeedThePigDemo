@@ -96,6 +96,7 @@ public class GameData : ScriptableObject, IGoldRate
     public DateTime LastAppClosedTime { get { return new DateTime(lastAppClosedTime); } private set { lastAppClosedTime = value.Ticks; } }
 
     public Animal Animal;
+    public List<int> PurchasedUpgradeIDs = new List<int>();
 
     public void UpdateAnimal(Animal animal)
     {
@@ -125,11 +126,33 @@ public class GameData : ScriptableObject, IGoldRate
         AnimalsSold += 0;
         TotalFoodBought += 0;
         TotalWeightAcquired += 0;
+
+        foreach (var upgradeID in PurchasedUpgradeIDs)
+        {
+            Events.OnChange(upgradeID, GameEventsEnum.Upgrade);
+        }
     }
 
     public void AddGold(int amount)
     {
         Gold += amount;
+    }
+
+    public void AddUpgrade(UpgradeShopItem upgrade)
+    {        
+        PurchasedUpgradeIDs.Add(upgrade.GetInstanceID());
+
+        Events.OnChange(upgrade.GetInstanceID(), GameEventsEnum.Upgrade);
+    }
+
+    public void AddWeight(FoodShopItem item)
+    {
+        Gold -= item.RelativePrice(GoldCostModifier);
+
+        var weightToAdd = Mathf.Min(Mathf.FloorToInt(item.Weight * WeightModifier), GameConstants.MaxAnimalWeight - Animal.AnimalWeight);
+        Animal.AnimalWeight += weightToAdd;
+        TotalWeightAcquired += weightToAdd;
+        TotalFoodBought++;
     }
 
     public void ResetData()

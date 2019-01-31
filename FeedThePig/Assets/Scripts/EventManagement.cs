@@ -83,5 +83,6 @@ public enum GameEventsEnum
     AnimalSold,
     TotalFoodBought,
     TotalWeightAcquired,
-    WeightProduction
+    WeightProduction,
+    Upgrade
 }

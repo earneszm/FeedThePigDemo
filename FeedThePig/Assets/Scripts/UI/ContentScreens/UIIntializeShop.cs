@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class UIFoodContent : MonoBehaviour, IIntializeInactive
+public class UIIntializeShop : MonoBehaviour, IIntializeInactive
 {
     [SerializeField]
     private GameObject shopContainer;
@@ -11,15 +11,20 @@ public class UIFoodContent : MonoBehaviour, IIntializeInactive
     [SerializeField]
     private UIShopRow shopRowPrefab;
 
+    [SerializeField]
+    private ShopPurchaseTypeEnum shopType;
+
     private List<UIShopRow> rows = new List<UIShopRow>();
 
     public void ForceAwake()
     {
-        var shopItems = ScriptableObjectUtils.GetAllInstances<ShopItem>().OrderBy(x => x.BasePrice);
+        var shopItems = ScriptableObjectUtils.GetAllInstances<ShopItem>()
+            .Where(x => x.PurchaseType == shopType && x.IsActive == true)
+            .OrderBy(x => x.BasePrice);
 
         foreach (var item in shopItems)
         {
-            var row = (UIShopRow)Instantiate(shopRowPrefab, shopContainer.transform);
+            var row = Instantiate(shopRowPrefab, shopContainer.transform);
             row.item = item;
             row.ForceAwake();
             rows.Add(row);

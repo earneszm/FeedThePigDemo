@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -33,6 +34,12 @@ public static class ScriptableObjectUtils
         }
 
         return a;
+
+    }
+
+    public static T[] GetAllInstances<T>(T instance) where T : ScriptableObject
+    {
+        return GetAllInstances<T>();
 
     }
 }

@@ -84,20 +84,19 @@ public class GameManager : MonoBehaviour
 
     public void OnShopItemPurchased(ShopItem item, Transform startingLocation)
     {
-        if (gameData.Gold >= item.RelativePrice(gameData.GoldCostModifier))
-        {
-            gameData.Gold -= item.RelativePrice(gameData.GoldCostModifier);
-
-            var weightToAdd = Mathf.Min(Mathf.FloorToInt(item.Weight * gameData.WeightModifier), GameConstants.MaxAnimalWeight);
-            gameData.Animal.AnimalWeight += weightToAdd;
-            gameData.TotalWeightAcquired += weightToAdd;
-            gameData.TotalFoodBought++;
-        }
-        else // sanity check to make sure we can actually do this, if not we will fire the change event again
+        // sanity check to make sure we can actually do this, if not we will fire the change event again
+        if (gameData.Gold < item.RelativePrice(gameData.GoldCostModifier))
         {
             gameData.Gold += 0;
             return;
         }
+
+        if (item is FoodShopItem && gameData.Animal.CanAddWeight)
+            gameData.AddWeight(item as FoodShopItem);
+        else if (item is UpgradeShopItem)
+            UpgradeController.HandleUpgrade(gameData, item as UpgradeShopItem);
+        else
+            return;
 
         effectsManager.LaunchItem(startingLocation, item.Icon);
     }
@@ -115,4 +114,28 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion
+}
+
+public class UpgradeController
+{
+    public static void HandleUpgrade(GameData data, UpgradeShopItem upgrade)
+    {
+        switch (upgrade.UpgradeType)
+        {
+            case UpgradeTypeEnum.GoldProductionRate:
+                data.GoldRatePerMinute += upgrade.Value;
+                break;            
+            case UpgradeTypeEnum.WeightProductionRate:
+                data.WeightRatePerMinute += upgrade.Value;
+                break;
+            case UpgradeTypeEnum.NotSet:
+            case UpgradeTypeEnum.MaxOfflineWeightAmount:
+            case UpgradeTypeEnum.MaxOfflineGoldAmount:
+            default:
+                Debug.LogError("Upgrade not implemented: " + nameof(upgrade.UpgradeType));
+                return;
+        }
+
+        data.AddUpgrade(upgrade);
+    }
 }
