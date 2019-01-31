@@ -64,7 +64,10 @@ public class GameManager : MonoBehaviour
     {
         var dateDifference = DateTime.Now - gameData.LastAppClosedTime;
         var goldEarned = Mathf.Min(gameData.MaxGoldPerOfflinePeriod, Mathf.FloorToInt((float)(dateDifference.TotalMinutes * gameData.GoldRatePerMinute)));
+
+        var maxWeightDeltaAllowed = Mathf.Max(0, GameConstants.MaxAnimalWeight - gameData.Animal.AnimalWeight);
         var weightGained = Mathf.Min(gameData.MaxWeightPerOfflinePeriod, (float)(dateDifference.TotalMinutes * gameData.WeightRatePerMinute));
+        weightGained = Mathf.Min(maxWeightDeltaAllowed, weightGained);
 
         gameData.Gold += goldEarned;
         gameData.Animal.AnimalWeight += weightGained;
