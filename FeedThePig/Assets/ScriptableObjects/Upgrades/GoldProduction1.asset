@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: a30c4715099cf7d4796fd9a97b79c222, type: 3}
   m_Name: GoldProduction1
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeShopItem
   Name: Gold Production 1
@@ -18,4 +18,4 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 264745156bc6f6a40a16ae14e6012d2f, type: 3}
   IsActive: 1
   UpgradeType: 1
-  Value: 10
+  Value: 5

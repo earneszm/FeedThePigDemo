@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 5281a4916111b7742b60b70e1ca8d8f9, type: 3}
   m_Name: Cake
   m_EditorClassIdentifier: Assembly-CSharp::FoodShopItem
   Name: Cake
-  Description: Moist cake.
+  Description: Moist Cake.
   BasePrice: 50
   Icon: {fileID: 21300000, guid: 98a58e01ddab0a8439de906056f2cdb1, type: 3}
   IsActive: 1
-  Weight: 25
+  Weight: 15

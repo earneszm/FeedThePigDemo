@@ -23,31 +23,3 @@ public abstract class ShopItem : ScriptableObject, IShopItemPurchaseType
         return Description;
     }
 }
-
-[CreateAssetMenu(fileName = "FoodShopItem", menuName = "Scriptables/ShopItem/FoodShopItem")]
-public class FoodShopItem : ShopItem
-{    
-    public int Weight;
-
-    private void OnEnable()
-    {
-        PurchaseType = ShopPurchaseTypeEnum.Food;
-    }
-}
-
-[CreateAssetMenu(fileName = "UpgradeShopItem", menuName = "Scriptables/ShopItem/UpgradeShopItem")]
-public class UpgradeShopItem : ShopItem
-{
-    public UpgradeTypeEnum UpgradeType;
-    public float Value;
-    
-    private void OnEnable()
-    {
-        PurchaseType = ShopPurchaseTypeEnum.Upgrade;        
-    }
-
-    public override string GetDescription()
-    {
-        return Description.Replace("{0}", Value.ToString());
-    }
-}

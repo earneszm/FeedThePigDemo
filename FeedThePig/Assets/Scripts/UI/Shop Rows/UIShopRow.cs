@@ -48,9 +48,9 @@ public class UIShopRow : MonoBehaviour, IIntializeInactive
 
     
 
-    protected void UpdateInteractable(bool isCurrentlyInteractable = true)
+    protected virtual void UpdateInteractable()
     {
-        bool interactable = isCurrentlyInteractable && !isBuyingDisabled;
+        bool interactable = !isBuyingDisabled;
 
         if (cachedGoldAmount < item.RelativePrice(cachedCostModifier))
             interactable = false;

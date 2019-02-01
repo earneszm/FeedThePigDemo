@@ -27,10 +27,20 @@ public class UIFoodShopRow : UIShopRow
         base.ForceStart();
     }
 
+    protected override void UpdateInteractable()
+    {
+        bool interactable = cachedWeightAmount < GameConstants.MaxAnimalWeight && !isBuyingDisabled;
+
+        if (cachedGoldAmount < item.RelativePrice(cachedCostModifier))
+            interactable = false;
+
+        buyButton.interactable = interactable;
+    }
+
     private void OnAnimalWeightChanged(float weight)
     {
         cachedWeightAmount = weight;
-        UpdateInteractable(cachedWeightAmount < GameConstants.MaxAnimalWeight);
+        UpdateInteractable();
     }
 
     private void OnWeightModifierChanged(float weightModifier)
