@@ -97,6 +97,8 @@ public class GameData : ScriptableObject, IGoldRate
 
     public Animal Animal;
     public List<int> PurchasedUpgradeIDs = new List<int>();
+    public int CurrentLevel;
+    public List<Enemy> CurrentEnemies = new List<Enemy>();
 
     public void UpdateAnimal(Animal animal)
     {
@@ -111,6 +113,7 @@ public class GameData : ScriptableObject, IGoldRate
 
     public void OnApplicationQuit()
     {
+        CurrentEnemies.Clear();
         IsExistingUser = true;
         LastAppClosedTime = DateTime.Now;
     }
@@ -153,6 +156,27 @@ public class GameData : ScriptableObject, IGoldRate
         Animal.AnimalWeight += weightToAdd;
         TotalWeightAcquired += weightToAdd;
         TotalFoodBought++;
+    }
+
+    public void AddEnemy(Enemy enemy)
+    {
+        CurrentEnemies.Add(enemy);
+    }
+
+    public void AddEnemy(List<Enemy> enemies)
+    {
+        foreach (var enemy in enemies)
+            AddEnemy(enemy);
+    }
+
+    public void ResetEnemies()
+    {
+        foreach (var enemy in CurrentEnemies)
+        {
+            enemy.gameObject.SetActive(false);
+        }
+
+        CurrentEnemies.Clear();
     }
 
     public void ResetData()

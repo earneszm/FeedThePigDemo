@@ -9,9 +9,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; set; }
 
-    [SerializeField]
-    private Transform spawnLocation;
-
 
     // Data
     [SerializeField]
@@ -21,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     // Systems Controllers
     private TimeController timeController;
+    private SpawnController spawnController;
 
     private void Awake()
     {
@@ -33,7 +31,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         effectsManager = GetComponent<EffectsManager>();
+        spawnController = GetComponent<SpawnController>();
         timeController = new TimeController(gameData, DateTime.Now);
+        timeController.TogglePause();
         StartCoroutine(LoadDataFromFile());
     }
 
@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour
 
         if (gameData.IsExistingUser)
             ShowWelcomeBackData();
+
+        gameData.AddEnemy(spawnController.SpawnLevel(1));
     }
 
     private void ShowWelcomeBackData()
@@ -110,7 +112,14 @@ public class GameManager : MonoBehaviour
         gameData.AnimalsSold++;
         gameData.Animal.AnimalWeight = 100f;
 
+        gameData.ResetEnemies();
         UIManager.Instance.OpenDialog(DialogTypeEnum.AnimalSale, saleWeight.ToString("N2"), goldAmountFromSale.ToString());
+        gameData.AddEnemy(spawnController.SpawnLevel(1));
+    }
+
+    public void OnPauseableMenuToggled(bool isOpened)
+    {
+        timeController.TogglePause(isOpened);
     }
 
     #endregion

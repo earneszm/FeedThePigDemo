@@ -34,4 +34,9 @@ public class TimeController
             }
         }
     }
+
+    public void TogglePause(bool shouldPause = true)
+    {
+        Time.timeScale = shouldPause ? 0f : 1f;
+    }
 }
