@@ -9,15 +9,38 @@ public class SpawnController : MonoBehaviour
     private Transform spawnPoolLocation;
     [SerializeField]
     private List<Spawner> spawners;
-    
 
-    public List<Enemy> SpawnLevel(int levelNumber)
+    private Spawner currentSpawner;
+    private float lastSpawnedAt;
+    private float spawnThreshold = 5;
+
+    public void LoadSpawner(int levelNumber)
     {
-        var spawner = spawners.SingleOrDefault(x => x.LevelNumber == levelNumber);
+        currentSpawner = spawners.SingleOrDefault(x => x.LevelNumber == levelNumber);
 
-        if (spawner == null)
+        if (currentSpawner == null)
             Debug.LogError("Level not found: " + levelNumber);
-
-        return spawner.Spawn(spawnPoolLocation);
     }
+
+    public void Spawn(float distanceTraveled)
+    {
+        if (distanceTraveled - lastSpawnedAt > spawnThreshold)
+        {
+            lastSpawnedAt = distanceTraveled;
+            currentSpawner.Spawn(spawnPoolLocation, spawnPoolLocation, 1);
+        }
+    }
+
+
+    //
+    //
+    //public List<Enemy> SpawnLevel(int levelNumber)
+    //{
+    //    var spawner = spawners.SingleOrDefault(x => x.LevelNumber == levelNumber);
+    //
+    //    if (spawner == null)
+    //        Debug.LogError("Level not found: " + levelNumber);
+    //
+    //    return spawner.Spawn(spawnPoolLocation);
+    //}
 }

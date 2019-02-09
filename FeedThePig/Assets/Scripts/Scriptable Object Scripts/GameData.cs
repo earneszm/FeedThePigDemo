@@ -8,97 +8,52 @@ using UnityEditor;
 [CreateAssetMenu(fileName = "gameData", menuName = "Scriptables/gameData")]
 public class GameData : ScriptableObject, IGoldRate
 {
-    [SerializeField]
-    private bool isExistingUser = false;
-    public bool IsExistingUser { get { return isExistingUser; } private set { isExistingUser = value; } }
+    #region Serialized Data
+    [SerializeField] private bool isExistingUser;    
+    [SerializeField] private int animalsSold;
+    [SerializeField] private int totalFoodBought;
+    [SerializeField] private float totalWeightAcquired;
+    [SerializeField] private long lastLoginTime;
+    [SerializeField] private long lastAppClosedTime;
 
-    [SerializeField]
-    private int gold = GameConstants.StartingGold;
-    public int Gold
-    {
-        get { return gold; }
-        set { gold = value; Events.OnChange(gold, GameEventsEnum.Gold); }
-    }    
+    [SerializeField] private int gold = GameConstants.StartingGold;
+    [SerializeField] private float goldCostModifier = GameConstants.GoldCostModifier;
+    [SerializeField] private float weightModifier = GameConstants.WeightModifier;
+    [SerializeField] private float goldRatePerMinute = GameConstants.GoldRatePerMinute;
+    [SerializeField] private float weightRatePerMinute = GameConstants.WeightRatePerMinute;
+    [SerializeField] private int maxGoldPerOfflinePeriod = GameConstants.MaxGoldPerOfflinePeriod;
+    [SerializeField] private float maxWeightPerOfflinePeriod = GameConstants.MaxWeightPerOfflinePeriod;
 
-    [SerializeField]
-    private int animalsSold;
-    public int AnimalsSold
-    {
-        get { return animalsSold; }
-        set { animalsSold = value; Events.OnChange(animalsSold, GameEventsEnum.AnimalSold); }
-    }
-
-    [SerializeField]
-    private int totalFoodBought;
-    public int TotalFoodBought
-    {
-        get { return totalFoodBought; }
-        set { totalFoodBought = value; Events.OnChange(totalFoodBought, GameEventsEnum.TotalFoodBought); }
-    }
-
-    [SerializeField]
-    private float totalWeightAcquired;
-    public float TotalWeightAcquired
-    {
-        get { return totalWeightAcquired; }
-        set { totalWeightAcquired = value; Events.OnChange(totalWeightAcquired, GameEventsEnum.TotalWeightAcquired); }
-    }
 
     public float goldPerWeightPrice = GameConstants.GoldPerWeightPrice;
-
-    [SerializeField]
-    private float goldCostModifier = GameConstants.GoldCostModifier;
-    public float GoldCostModifier
-    {
-        get { return goldCostModifier; }
-        set { goldCostModifier = value; Events.OnChange(goldCostModifier, GameEventsEnum.GoldCostModifier); }
-    }
-
-    [SerializeField]
-    private float weightModifier = GameConstants.WeightModifier;
-    public float WeightModifier
-    {
-        get { return weightModifier; }
-        set { weightModifier = value; Events.OnChange(weightModifier, GameEventsEnum.WeightModifier); }
-    }
-
-    [SerializeField]
-    private float goldRatePerMinute = GameConstants.GoldRatePerMinute;
-    public float GoldRatePerMinute
-    {
-        get { return goldRatePerMinute; }
-        set { goldRatePerMinute = value; Events.OnChange(goldRatePerMinute, GameEventsEnum.GoldProduction); }
-    }
-
-    [SerializeField]
-    private float weightRatePerMinute = GameConstants.WeightRatePerMinute;
-    public float WeightRatePerMinute
-    {
-        get { return weightRatePerMinute; }
-        set { weightRatePerMinute = value; Events.OnChange(weightRatePerMinute, GameEventsEnum.WeightProduction); }
-    }
-
-
-    [SerializeField]
-    private int maxGoldPerOfflinePeriod = GameConstants.MaxGoldPerOfflinePeriod;
-    public int MaxGoldPerOfflinePeriod { get { return maxGoldPerOfflinePeriod; } }
-
-    [SerializeField]
-    private float maxWeightPerOfflinePeriod = GameConstants.MaxWeightPerOfflinePeriod;
-    public float MaxWeightPerOfflinePeriod { get { return maxWeightPerOfflinePeriod; } }
-
-    [SerializeField]
-    private long lastLoginTime;
-    public DateTime LastLoginTime { get { return new DateTime(lastLoginTime); } private set { lastLoginTime = value.Ticks; } }
-
-    [SerializeField]
-    private long lastAppClosedTime;
-    public DateTime LastAppClosedTime { get { return new DateTime(lastAppClosedTime); } private set { lastAppClosedTime = value.Ticks; } }
-
-    public Animal Animal;
-    public List<int> PurchasedUpgradeIDs = new List<int>();
     public int CurrentLevel;
+    public Animal Animal;
+
+    public List<int> PurchasedUpgradeIDs = new List<int>();    
     public List<Enemy> CurrentEnemies = new List<Enemy>();
+    #endregion
+
+    #region Properties
+
+    public bool IsExistingUser             { get { return isExistingUser;                  } private set { isExistingUser = value; } }
+    public int MaxGoldPerOfflinePeriod     { get { return maxGoldPerOfflinePeriod;         } }
+    public float MaxWeightPerOfflinePeriod { get { return maxWeightPerOfflinePeriod;       } }
+    public DateTime LastLoginTime          { get { return new DateTime(lastLoginTime);     } private set { lastLoginTime = value.Ticks; } }
+    public DateTime LastAppClosedTime      { get { return new DateTime(lastAppClosedTime); } private set { lastAppClosedTime = value.Ticks; } }
+
+    // Properties with Events
+    public int   Gold                  { get { return gold;                } set { gold = value;                Events.OnChange(gold,                GameEventsEnum.Gold);                } }        
+    public int   AnimalsSold           { get { return animalsSold;         } set { animalsSold = value;         Events.OnChange(animalsSold,         GameEventsEnum.AnimalSold);          } }    
+    public int   TotalFoodBought       { get { return totalFoodBought;     } set { totalFoodBought = value;     Events.OnChange(totalFoodBought,     GameEventsEnum.TotalFoodBought);     } }
+    public float TotalWeightAcquired   { get { return totalWeightAcquired; } set { totalWeightAcquired = value; Events.OnChange(totalWeightAcquired, GameEventsEnum.TotalWeightAcquired); } }
+    public float GoldCostModifier      { get { return goldCostModifier;    } set { goldCostModifier = value;    Events.OnChange(goldCostModifier,    GameEventsEnum.GoldCostModifier);    } }
+    public float WeightModifier        { get { return weightModifier;      } set { weightModifier = value;      Events.OnChange(weightModifier,      GameEventsEnum.WeightModifier);      } }
+    public float GoldRatePerMinute     { get { return goldRatePerMinute;   } set { goldRatePerMinute = value;   Events.OnChange(goldRatePerMinute,   GameEventsEnum.GoldProduction);      } }
+    public float WeightRatePerMinute   { get { return weightRatePerMinute; } set { weightRatePerMinute = value; Events.OnChange(weightRatePerMinute, GameEventsEnum.WeightProduction);    } }
+
+    #endregion
+
+    #region Helper Methods
 
     public void UpdateAnimal(Animal animal)
     {
@@ -183,4 +138,6 @@ public class GameData : ScriptableObject, IGoldRate
     {
         ScriptableObjectUtils.Reset(this);
     }
+
+    #endregion
 }

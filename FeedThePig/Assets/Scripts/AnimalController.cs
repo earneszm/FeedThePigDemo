@@ -36,9 +36,13 @@ public class AnimalController : MonoBehaviour, ITakeDamage
         var hit = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y), gameObject.transform.right, attackRange, layerMask);
 
         if (CanMove(hit))
-            transform.Translate(transform.right * speed * Time.deltaTime);
+            GameManager.Instance.OnPlayerMovementUpdate(true, speed);
+        //  transform.Translate(transform.right * speed * Time.deltaTime);
         else
+        {
+            GameManager.Instance.OnPlayerMovementUpdate(false, 0);
             TryAttack(hit);
+        }
     }
 
     private void TryAttack(RaycastHit2D hit)

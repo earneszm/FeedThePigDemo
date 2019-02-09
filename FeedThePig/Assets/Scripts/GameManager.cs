@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     private TimeController timeController;
     private SpawnController spawnController;
 
+    public bool IsPlayerMoving;
+    public float PlayerDistance;
+
     private void Awake()
     {
         if (Instance == null)
@@ -40,6 +43,9 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         timeController.DoUpdate(Time.deltaTime);
+
+      //  if (IsPlayerMoving == true)
+      //      spawnController.Spawn(PlayerDistance);
     }
 
     private void OnApplicationQuit()
@@ -59,7 +65,8 @@ public class GameManager : MonoBehaviour
         if (gameData.IsExistingUser)
             ShowWelcomeBackData();
 
-        gameData.AddEnemy(spawnController.SpawnLevel(1));
+        spawnController.LoadSpawner(1);
+      //  gameData.AddEnemy(spawnController.SpawnLevel(1));
     }
 
     private void ShowWelcomeBackData()
@@ -83,6 +90,12 @@ public class GameManager : MonoBehaviour
     }
 
     #region Events
+
+    public void OnPlayerMovementUpdate(bool isMoving, float speed)
+    {
+        IsPlayerMoving = isMoving;
+        PlayerDistance += speed * Time.deltaTime;
+    }
 
     public void OnShopItemPurchased(ShopItem item, Transform startingLocation)
     {
@@ -114,7 +127,7 @@ public class GameManager : MonoBehaviour
 
         gameData.ResetEnemies();
         UIManager.Instance.OpenDialog(DialogTypeEnum.AnimalSale, saleWeight.ToString("N2"), goldAmountFromSale.ToString());
-        gameData.AddEnemy(spawnController.SpawnLevel(1));
+     //   gameData.AddEnemy(spawnController.SpawnLevel(1));
     }
 
     public void OnPauseableMenuToggled(bool isOpened)

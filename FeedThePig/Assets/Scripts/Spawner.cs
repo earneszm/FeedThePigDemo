@@ -25,15 +25,18 @@ public class Spawner : ScriptableObject
             Debug.LogError("Incorrect naming format for spawner: " + name);
     }
 
-    public List<Enemy> Spawn(Transform parent)
+    public List<Enemy> Spawn(Transform parent, Transform spawnLocation, int? overrideNumToSpawn = null)
     {
         if (enemyPrefab.GetComponent<Enemy>() == null)
             Debug.LogError("Enemy Prefab on spawner: " + name + " does not implement IEnemy");
 
+        if (overrideNumToSpawn == null)
+            overrideNumToSpawn = numEnemiesToSpawn;
+
         var enemyList = new List<Enemy>();
-        for (int i = 1; i <= numEnemiesToSpawn; i++)
+        for (int i = 1; i <= overrideNumToSpawn; i++)
         {
-            var go = Instantiate(enemyPrefab, new Vector3(i * spawnSeperation, 0, 0), Quaternion.identity, parent);
+            var go = Instantiate(enemyPrefab, spawnLocation.position, Quaternion.identity, parent);
             enemyList.Add(go);
         }
 
