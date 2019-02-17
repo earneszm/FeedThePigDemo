@@ -13,7 +13,12 @@ public class Spawner : ScriptableObject
     [SerializeField]
     private int numEnemiesToSpawn = 5;
     [SerializeField]
+    private int maxEnemiesToSpawn = 10;
+    [SerializeField]
     private float spawnSeperation = 10f;
+
+    public int MaxEnemiesToSpawn { get { return maxEnemiesToSpawn; } }
+
 
     private void OnValidate()
     {

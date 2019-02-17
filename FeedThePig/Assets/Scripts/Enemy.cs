@@ -8,6 +8,11 @@ public class Enemy : MonoBehaviour, ITakeDamage, IEnemy
 
     public int Health { get { return health; } }
 
+    private float distanceThreshold = 1f;
+    private float speed = 2f;
+
+    private bool isDoneMoving;
+
     public void TakeDamage(int damage)
     {
         Debug.Log(name + " takes " + damage + " damage");
@@ -20,5 +25,19 @@ public class Enemy : MonoBehaviour, ITakeDamage, IEnemy
     public void Kill()
     {
         gameObject.SetActive(false);
+    }
+
+    public void TryMove(Transform target)
+    {
+        if (isDoneMoving)
+            return;
+
+        if (Vector3.Distance(transform.position, target.position) > distanceThreshold)
+        {
+            // move
+            transform.Translate(-transform.right * speed * Time.deltaTime);
+        }
+        else
+            isDoneMoving = true;
     }
 }

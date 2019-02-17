@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     // Data
     [SerializeField]
     private GameData gameData;
+    [SerializeField]
+    private GameObject animalObject;
 
     private EffectsManager effectsManager;
 
@@ -44,8 +46,10 @@ public class GameManager : MonoBehaviour
     {
         timeController.DoUpdate(Time.deltaTime);
 
-      //  if (IsPlayerMoving == true)
-      //      spawnController.Spawn(PlayerDistance);
+        spawnController.MoveEnemies(animalObject.transform);
+
+        if (IsPlayerMoving == true)
+            spawnController.Spawn(PlayerDistance);
     }
 
     private void OnApplicationQuit()

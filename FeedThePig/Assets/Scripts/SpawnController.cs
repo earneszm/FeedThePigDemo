@@ -12,7 +12,9 @@ public class SpawnController : MonoBehaviour
 
     private Spawner currentSpawner;
     private float lastSpawnedAt;
-    private float spawnThreshold = 5;
+    private float spawnThreshold = 8;
+
+    private List<Enemy> enemies = new List<Enemy>();
 
     public void LoadSpawner(int levelNumber)
     {
@@ -27,7 +29,15 @@ public class SpawnController : MonoBehaviour
         if (distanceTraveled - lastSpawnedAt > spawnThreshold)
         {
             lastSpawnedAt = distanceTraveled;
-            currentSpawner.Spawn(spawnPoolLocation, spawnPoolLocation, 1);
+            enemies.AddRange(currentSpawner.Spawn(spawnPoolLocation, spawnPoolLocation, 1));
+        }
+    }
+
+    public void MoveEnemies(Transform target)
+    {
+        foreach (var enemy in enemies)
+        {
+            enemy.TryMove(target);
         }
     }
 
