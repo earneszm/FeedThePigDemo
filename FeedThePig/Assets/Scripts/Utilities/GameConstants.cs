@@ -11,6 +11,7 @@ public static class GameConstants
     public const float WeightRatePerMinute = 2f;
 
     public const float StartingAnimalWeight = 100f;
+    public const int StartingAnimalDamage = 10;
     public const int StartingGold = 55;
 
     public const int MaxGoldPerOfflinePeriod = 5000;

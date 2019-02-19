@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimalController : MonoBehaviour, ITakeDamage
+public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
 {
     [SerializeField]
     private float attackRange = 5;
@@ -14,11 +14,18 @@ public class AnimalController : MonoBehaviour, ITakeDamage
     private float lastAttack = 0f;
 
     private int layerMask;
-    
+
+    private Animal animal;
+
+    public void Initialize(Animal animal)
+    {
+        this.animal = animal;
+    }
+
 
     public void TakeDamage(int damage)
     {
-        Debug.Log("Animal is taking damage: " + damage);
+        animal.AnimalWeight -= damage;
     }
 
 
@@ -26,6 +33,7 @@ public class AnimalController : MonoBehaviour, ITakeDamage
     void Start()
     {
         layerMask = LayerMask.GetMask("Enemy");
+        lastAttack = attackSpeed;
 
         Events.Register<int>(GameEventsEnum.AnimalSold, OnAnimalSoldChanged);
     }
@@ -56,9 +64,14 @@ public class AnimalController : MonoBehaviour, ITakeDamage
             if (entity != null)
             {
                 lastAttack = 0f;
-                entity.TakeDamage(10);                
+                Attack(entity);              
             }
         }
+    }
+
+    public void Attack(ITakeDamage target)
+    {
+        target.TakeDamage(animal.Damage);
     }
 
     // if there is nothing in our range, return true
@@ -73,7 +86,7 @@ public class AnimalController : MonoBehaviour, ITakeDamage
 
     public void Kill()
     {
-        Debug.LogError("Kill not implemented on Animal");
+        animal.AnimalWeight = 0;
     }
 
     private void OnAnimalSoldChanged(int weight)

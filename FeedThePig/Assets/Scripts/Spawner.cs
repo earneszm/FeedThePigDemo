@@ -11,6 +11,8 @@ public class Spawner : ScriptableObject
     [SerializeField]
     private Enemy enemyPrefab;
     [SerializeField]
+    private Enemy bossPrefab;
+   // [SerializeField]
     private int numEnemiesToSpawn = 5;
     [SerializeField]
     private int maxEnemiesToSpawn = 10;
@@ -30,9 +32,11 @@ public class Spawner : ScriptableObject
             Debug.LogError("Incorrect naming format for spawner: " + name);
     }
 
-    public List<Enemy> Spawn(Transform parent, Transform spawnLocation, int? overrideNumToSpawn = null)
+    public List<Enemy> Spawn(Transform parent, Transform spawnLocation, ITakeDamage animalTarget, int? overrideNumToSpawn = null, bool isLastEnemy = false)
     {
-        if (enemyPrefab.GetComponent<Enemy>() == null)
+        Enemy prefabToSpawn = isLastEnemy ? bossPrefab : enemyPrefab;
+
+        if (prefabToSpawn.GetComponent<Enemy>() == null)
             Debug.LogError("Enemy Prefab on spawner: " + name + " does not implement IEnemy");
 
         if (overrideNumToSpawn == null)
@@ -41,7 +45,8 @@ public class Spawner : ScriptableObject
         var enemyList = new List<Enemy>();
         for (int i = 1; i <= overrideNumToSpawn; i++)
         {
-            var go = Instantiate(enemyPrefab, spawnLocation.position, Quaternion.identity, parent);
+            var go = Instantiate(prefabToSpawn, spawnLocation.position, Quaternion.identity, parent);
+            go.Initialize(animalTarget);
             enemyList.Add(go);
         }
 

@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameData gameData;
     [SerializeField]
-    private GameObject animalObject;
+    private AnimalController animalObject;
 
     private EffectsManager effectsManager;
 
@@ -22,8 +22,8 @@ public class GameManager : MonoBehaviour
     private TimeController timeController;
     private SpawnController spawnController;
 
-    public bool IsPlayerMoving;
-    public float PlayerDistance;
+    private bool IsInitializeDone;
+    
 
     private void Awake()
     {
@@ -44,12 +44,15 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (IsInitializeDone == false)
+            return;
+
         timeController.DoUpdate(Time.deltaTime);
 
         spawnController.MoveEnemies(animalObject.transform);
 
-        if (IsPlayerMoving == true)
-            spawnController.Spawn(PlayerDistance);
+        if (gameData.IsPlayerMoving == true)
+            spawnController.Spawn(gameData.PlayerDistance, animalObject);
     }
 
     private void OnApplicationQuit()
@@ -62,15 +65,29 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-        SaveController.Load(gameData);
+        // SaveController.Load(gameData);
+        ScriptableObjectUtils.Reset(gameData);
 
         gameData.OnApplicationOpen();
 
-        if (gameData.IsExistingUser)
-            ShowWelcomeBackData();
+       // if (gameData.IsExistingUser)
+       //     ShowWelcomeBackData();
 
-        spawnController.LoadSpawner(1);
-      //  gameData.AddEnemy(spawnController.SpawnLevel(1));
+        
+        animalObject.Initialize(gameData.Animal);
+
+        gameData.CurrentLevel = 1;
+        StartLevel(gameData.CurrentLevel);
+
+        timeController.TogglePause(false);
+
+        IsInitializeDone = true;
+    }
+
+    private void StartLevel(int levelNumber)
+    {
+        spawnController.LoadSpawner(levelNumber);
+        effectsManager.SetOverlayText("Level " + levelNumber);
     }
 
     private void ShowWelcomeBackData()
@@ -97,8 +114,8 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerMovementUpdate(bool isMoving, float speed)
     {
-        IsPlayerMoving = isMoving;
-        PlayerDistance += speed * Time.deltaTime;
+        gameData.IsPlayerMoving = isMoving;
+        gameData.PlayerDistance += speed * Time.deltaTime;
     }
 
     public void OnShopItemPurchased(ShopItem item, Transform startingLocation)
@@ -137,6 +154,29 @@ public class GameManager : MonoBehaviour
     public void OnPauseableMenuToggled(bool isOpened)
     {
         timeController.TogglePause(isOpened);
+    }
+
+    public void GainGold(int goldAmount, bool isAnimate = true)
+    {
+        gameData.AddGold(goldAmount);
+    }
+
+    public void AdvanceLevel()
+    {
+        gameData.CurrentLevel++;
+        StartLevel(gameData.CurrentLevel);
+    }
+
+    public void CreateLoot(LootItem item)
+    {
+        effectsManager.SetOverlayText(string.Format("Found item: {0}", item.Description), 2f);
+    }
+
+    public void ResetGame()
+    {
+        gameData.ResetData();
+        gameData.ForceDataBind();
+        spawnController.Reset();
     }
 
     #endregion

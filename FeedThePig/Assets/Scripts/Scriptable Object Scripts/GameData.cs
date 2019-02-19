@@ -9,7 +9,7 @@ using UnityEditor;
 public class GameData : ScriptableObject, IGoldRate
 {
     #region Serialized Data
-    [SerializeField] private bool isExistingUser;    
+    [SerializeField] private bool isExistingUser;
     [SerializeField] private int animalsSold;
     [SerializeField] private int totalFoodBought;
     [SerializeField] private float totalWeightAcquired;
@@ -26,8 +26,11 @@ public class GameData : ScriptableObject, IGoldRate
 
 
     public float goldPerWeightPrice = GameConstants.GoldPerWeightPrice;
-    public int CurrentLevel;
+    public int CurrentLevel;   
     public Animal Animal;
+
+    public float PlayerDistance;
+    public bool IsPlayerMoving;
 
     public List<int> PurchasedUpgradeIDs = new List<int>();    
     public List<Enemy> CurrentEnemies = new List<Enemy>();
