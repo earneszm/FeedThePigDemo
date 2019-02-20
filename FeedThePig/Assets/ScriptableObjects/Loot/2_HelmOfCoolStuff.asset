@@ -10,9 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fc8ad5252354d041a92b02b01afbd70, type: 3}
-  m_Name: HammerOfCrushing
+  m_Name: 2_HelmOfCoolStuff
   m_EditorClassIdentifier: 
-  Description: Hammer of Crushing
+  Description: Helm of Cool Stuff
   Icon: {fileID: 21300000, guid: 7631cc776173af545a45f9082160ffaf, type: 3}
-  DropWeight: 50
+  DropWeight: 0
   onPickupGoTo: 0
+  rarity: 2
+  Damage: 0
+  CritChance: 0
+  CritDamage: 0
+  Armor: 5
+  Speed: 0

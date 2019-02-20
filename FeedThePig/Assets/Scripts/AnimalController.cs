@@ -7,8 +7,6 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
     [SerializeField]
     private float attackRange = 5;
     [SerializeField]
-    private float speed = 5;
-    [SerializeField]
     private float attackSpeed = 2;
 
     private float lastAttack = 0f;
@@ -16,10 +14,12 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
     private int layerMask;
 
     private Animal animal;
+    private bool isInitialized;
 
     public void Initialize(Animal animal)
     {
         this.animal = animal;
+        isInitialized = true;
     }
 
 
@@ -40,11 +40,14 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
 
     // Update is called once per frame
     void Update()
-    {        
+    {
+        if (isInitialized == false)
+            return;
+
         var hit = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y), gameObject.transform.right, attackRange, layerMask);
 
         if (CanMove(hit))
-            GameManager.Instance.OnPlayerMovementUpdate(true, speed);
+            GameManager.Instance.OnPlayerMovementUpdate(true, animal.Speed);
         //  transform.Translate(transform.right * speed * Time.deltaTime);
         else
         {
@@ -71,7 +74,7 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
 
     public void Attack(ITakeDamage target)
     {
-        target.TakeDamage(animal.Damage);
+        target.TakeDamage(animal.RollDamage());
     }
 
     // if there is nothing in our range, return true

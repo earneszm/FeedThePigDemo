@@ -173,7 +173,15 @@ MonoBehaviour:
   goldMinAmount: 5
   goldMaxAmount: 10
   possibleLoot:
+  - {fileID: 11400000, guid: 74f9c7bd92198be4ebb4b98cf1274d55, type: 2}
+  - {fileID: 11400000, guid: e2cd6bab8638f8a40a74d7578d07f8e0, type: 2}
   - {fileID: 11400000, guid: 6e19c5ac739a7c24081ce408cfd10e01, type: 2}
+  - {fileID: 11400000, guid: bec4ba96dd11cf049b986458ec5ac2b0, type: 2}
+  - {fileID: 11400000, guid: 9edc67accc32b7a4f9e681de67293cc1, type: 2}
+  - {fileID: 11400000, guid: 3a52acacd03b22a489e3d1362bf4ca5b, type: 2}
+  - {fileID: 11400000, guid: 1678dda8e1ea1cf43832ca25a0d14f68, type: 2}
+  - {fileID: 11400000, guid: bb682821ca523bf4980a1ef3f07fadb1, type: 2}
+  - {fileID: 11400000, guid: 842d89200f2369249a743d2fd2c1ed23, type: 2}
 --- !u!1 &7248323629744104796
 GameObject:
   m_ObjectHideFlags: 0

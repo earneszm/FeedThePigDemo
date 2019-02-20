@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
 
         timeController.DoUpdate(Time.deltaTime);
 
-        spawnController.MoveEnemies(animalObject.transform);
+        spawnController.MoveEnemies(animalObject.transform, gameData.Animal.Speed);
 
         if (gameData.IsPlayerMoving == true)
             spawnController.Spawn(gameData.PlayerDistance, animalObject);
@@ -170,6 +170,7 @@ public class GameManager : MonoBehaviour
     public void CreateLoot(LootItem item)
     {
         effectsManager.SetOverlayText(string.Format("Found item: {0}", item.Description), 2f);
+        gameData.AddLoot(item);
     }
 
     public void ResetGame()

@@ -41,10 +41,71 @@ public class Animal
         }
     }
 
+    [SerializeField]
+    private int armor = GameConstants.StartingAnimalDamage;
+    public int Armor
+    {
+        get { return armor; }
+        set
+        {
+            armor = value;
+            Events.OnChange(armor, GameEventsEnum.AnimalArmorChanged);
+        }
+    }
+
+    [SerializeField]
+    private float speed = GameConstants.StartingAnimalSpeed;
+    public float Speed
+    {
+        get { return speed; }
+        set
+        {
+            speed = value;
+            Events.OnChange(speed, GameEventsEnum.AnimalSpeedChanged);
+        }
+    }
+
+    [SerializeField]
+    private float critChance = GameConstants.StartingAnimalCritChance;
+    public float CritChance
+    {
+        get { return critChance; }
+        set
+        {
+            critChance = value;
+            Events.OnChange(critChance, GameEventsEnum.AnimalCritChanceChanged);
+        }
+    }
+
+    [SerializeField]
+    private float critDamage = GameConstants.StartingAnimalCritDamage;
+    public float CritDamage
+    {
+        get { return critDamage; }
+        set
+        {
+            critDamage = value;
+            Events.OnChange(critDamage, GameEventsEnum.AnimalCritDamageChanged);
+        }
+    }
+
     public bool CanAddWeight { get { return AnimalWeight < GameConstants.MaxAnimalWeight; } }
 
     public void ForceDataBind()
     {
         AnimalWeight += 0;
+        Damage += 0;
+        Armor += 0;
+        Speed += 0;
+        CritChance += 0;
+        CritDamage += 0;
+    }
+
+    public int RollDamage()
+    {
+        if (UnityEngine.Random.Range(1, 100) <= CritChance)
+            return Mathf.FloorToInt(Damage * (1 + CritDamage));
+
+        return Damage;
     }
 }

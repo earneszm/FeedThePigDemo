@@ -173,6 +173,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goldMinAmount: 20
   goldMaxAmount: 30
+  possibleLoot:
+  - {fileID: 11400000, guid: 9edc67accc32b7a4f9e681de67293cc1, type: 2}
+  - {fileID: 11400000, guid: 3a52acacd03b22a489e3d1362bf4ca5b, type: 2}
+  - {fileID: 11400000, guid: 1678dda8e1ea1cf43832ca25a0d14f68, type: 2}
+  - {fileID: 11400000, guid: bb682821ca523bf4980a1ef3f07fadb1, type: 2}
+  - {fileID: 11400000, guid: 842d89200f2369249a743d2fd2c1ed23, type: 2}
 --- !u!114 &2232715321014783562
 MonoBehaviour:
   m_ObjectHideFlags: 0

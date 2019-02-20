@@ -34,6 +34,7 @@ public class GameData : ScriptableObject, IGoldRate
 
     public List<int> PurchasedUpgradeIDs = new List<int>();    
     public List<Enemy> CurrentEnemies = new List<Enemy>();
+    public List<LootItem> Loot = new List<LootItem>();
     #endregion
 
     #region Properties
@@ -137,9 +138,24 @@ public class GameData : ScriptableObject, IGoldRate
         CurrentEnemies.Clear();
     }
 
+    public void AddLoot(LootItem item)
+    {
+        Loot.Add(item);
+        CalculateLootModifiers();
+    }
+
     public void ResetData()
     {
         ScriptableObjectUtils.Reset(this);
+    }
+
+    private void CalculateLootModifiers()
+    {
+        Animal.Damage = GameConstants.StartingAnimalDamage + Loot.Sum(x => x.Damage);
+        Animal.Speed  = GameConstants.StartingAnimalSpeed + Loot.Sum(x => x.Speed);
+        Animal.Armor  = GameConstants.StartingAnimalArmor + Loot.Sum(x => x.Armor);
+        Animal.CritChance = GameConstants.StartingAnimalCritChance + Loot.Sum(x => x.CritChance);
+        Animal.CritDamage = GameConstants.StartingAnimalCritDamage + Loot.Sum(x => x.CritDamage);
     }
 
     #endregion

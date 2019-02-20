@@ -22,7 +22,6 @@ public class Enemy : MonoBehaviour, ITakeDamage, IEnemy, IAttack
     public int MaxHealth { get { return maxHealth; } }
 
     private float distanceThreshold = 1f;
-    private float speed = 2f;
 
     private float lastAttack = 0f;
 
@@ -77,7 +76,7 @@ public class Enemy : MonoBehaviour, ITakeDamage, IEnemy, IAttack
         gameObject.SetActive(false);
     }
 
-    public void TryMove(Transform target)
+    public void TryMove(Transform target, float speed)
     {
         if (isDoneMoving)
             return;

@@ -42,6 +42,8 @@ public class EventController<T> : EventControllerBase
 
     public override void Raise(object data)
     {
+        if (data is T == false)
+            Debug.LogError(string.Format("Invalid cast in events. Expected type: {0}. Received Type: {1}", typeof(T).Name, data.GetType().Name));
         OnRaise?.Invoke((T)data);
     }
 
@@ -86,5 +88,9 @@ public enum GameEventsEnum
     WeightProduction,
     Upgrade,
     AnimalDeath,
-    AnimalDamageChanged
+    AnimalDamageChanged,
+    AnimalArmorChanged,
+    AnimalSpeedChanged,
+    AnimalCritChanceChanged,
+    AnimalCritDamageChanged
 }

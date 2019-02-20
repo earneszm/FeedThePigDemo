@@ -6,13 +6,15 @@ using TMPro;
 public class UIHomeContent : MonoBehaviour, IIntializeInactive
 {
     [SerializeField]
-    private UIDynamicText goldPerMinute;
+    private UIDynamicText damage;
     [SerializeField]
-    private UIDynamicText animalsSold;
+    private UIDynamicText armor;
     [SerializeField]
-    private UIDynamicText foodItemsBought;
+    private UIDynamicText speed;
     [SerializeField]
-    private UIDynamicText totalWeightOfFood;
+    private UIDynamicText critChance;
+    [SerializeField]
+    private UIDynamicText critDamage;
 
 
     public void ForceAwake()
@@ -21,30 +23,36 @@ public class UIHomeContent : MonoBehaviour, IIntializeInactive
 
     public void ForceStart()
     {
-        Events.Register<float>(GameEventsEnum.GoldProduction, OnGoldProductionChanged);
-        Events.Register<int>(GameEventsEnum.AnimalSold, OnAnimalSoldChanged);
-        Events.Register<int>(GameEventsEnum.TotalFoodBought, OnTotalFoodBought);
-        Events.Register<float>(GameEventsEnum.TotalWeightAcquired, OnTotalWeightAcquired);
-        
+        Events.Register<int>(GameEventsEnum.AnimalDamageChanged, OnDamageChanged);
+        Events.Register<int>(GameEventsEnum.AnimalArmorChanged, OnArmorChanged);
+        Events.Register<float>(GameEventsEnum.AnimalSpeedChanged, OnSpeedChanged);
+        Events.Register<float>(GameEventsEnum.AnimalCritChanceChanged, OnCritChanceChanged);
+        Events.Register<float>(GameEventsEnum.AnimalCritDamageChanged, OnCritDamageChanged);
+
     }
 
-    private void OnGoldProductionChanged (float amount)
+    private void OnDamageChanged(int amount)
     {
-        goldPerMinute.UpdateContent(amount);
+        damage.UpdateContent(amount);
     }
 
-    private void OnAnimalSoldChanged (int number)
+    private void OnArmorChanged(int number)
     {
-        animalsSold.UpdateContent(number);
+        armor.UpdateContent(number);
     }
 
-    private void OnTotalFoodBought(int number)
+    private void OnSpeedChanged(float number)
     {
-        foodItemsBought.UpdateContent(number);
+        speed.UpdateContent(number);
     }
 
-    private void OnTotalWeightAcquired(float number)
+    private void OnCritChanceChanged(float number)
     {
-        totalWeightOfFood.UpdateContent(number.ToString("N2"));
+        critChance.UpdateContent(number.ToString("N2"));
+    }
+
+    private void OnCritDamageChanged(float number)
+    {
+        critDamage.UpdateContent(number.ToString("N2"));
     }
 }

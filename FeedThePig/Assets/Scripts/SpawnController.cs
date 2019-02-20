@@ -49,11 +49,11 @@ public class SpawnController : MonoBehaviour
         return false;
     }
 
-    public void MoveEnemies(Transform target)
+    public void MoveEnemies(Transform target, float speed)
     {
         foreach (var enemy in enemies)
         {
-            enemy.TryMove(target);
+            enemy.TryMove(target, speed);
         }
     }
 

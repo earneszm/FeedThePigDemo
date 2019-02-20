@@ -9,4 +9,17 @@ public class LootItem : ScriptableObject
     public Sprite Icon;    
     public float DropWeight = 50f;
     public LaunchTargetLocationEnum onPickupGoTo;
+    public LootRarityEnum rarity;
+
+    [Header("Modifiers")]
+    public int Damage = 0;
+    public float CritChance = 0f;
+    public float CritDamage = 0f;
+    public int Armor = 0;
+    public float Speed = 0f;
+
+    public float GetWeight()
+    {
+        return GameConstants.GetRarityWeight(rarity) + DropWeight;
+    }
 }
