@@ -16,7 +16,7 @@ public class UIGoldDisplay : MonoBehaviour
     private void Start()
     {
         // GameManager.Instance.OnGoldAmountChanged += OnGoldAmountChanged;
-        Events.Register<int>(GameEventsEnum.Gold, OnGoldAmountChanged);
+        Events.Register<int>(GameEventsEnum.DataGoldChanged, OnGoldAmountChanged);
     }
 
     private void OnGoldAmountChanged(int amount)

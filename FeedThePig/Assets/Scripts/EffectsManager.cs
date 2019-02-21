@@ -19,6 +19,12 @@ public class EffectsManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI overlayText;
 
+    private void Start()
+    {
+        Events.Register<LootItem>(GameEventsEnum.EventLootDropped, (item) => { SetOverlayText(string.Format("Found item: {0}", item.Description), 2f); });
+        Events.Register<int>(GameEventsEnum.EventStartLevel, (number)     => { SetOverlayText("Level " + number); });
+        Events.Register<ShopItem, Transform>(GameEventsEnum.EventShopItemPurchased, (item, location) => { LaunchItem(location, item.Icon); });
+    }
 
     public void LaunchItem(Transform startingLocation, Sprite icon, LaunchTargetLocationEnum target = LaunchTargetLocationEnum.Default)
     {

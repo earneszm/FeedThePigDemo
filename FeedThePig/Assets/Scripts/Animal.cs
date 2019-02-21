@@ -8,6 +8,9 @@ public class Animal
 {
     public AnimalTypesEnum animalType;
 
+    public float PlayerDistance;
+    public bool IsPlayerMoving;
+
     [SerializeField]
     private float animalWeight = GameConstants.StartingAnimalWeight;
     public float AnimalWeight
@@ -19,12 +22,11 @@ public class Animal
             else
                 animalWeight = value;
 
-            Events.OnChange(animalWeight, GameEventsEnum.AnimalWeight);
+            Events.Raise(animalWeight, GameEventsEnum.DataAnimalWeightChanged);
 
             if (animalWeight <= 0)
             {
-                Events.OnChange(animalWeight, GameEventsEnum.AnimalDeath);
-                GameManager.Instance.ResetGame();
+                Events.Raise(GameEventsEnum.EventAnimalDeath);
             }
         }        
     }
@@ -37,7 +39,7 @@ public class Animal
         set
         {
             damage = value;
-            Events.OnChange(damage, GameEventsEnum.AnimalDamageChanged);
+            Events.Raise(damage, GameEventsEnum.DataAnimalDamageChanged);
         }
     }
 
@@ -49,7 +51,7 @@ public class Animal
         set
         {
             armor = value;
-            Events.OnChange(armor, GameEventsEnum.AnimalArmorChanged);
+            Events.Raise(armor, GameEventsEnum.DataAnimalArmorChanged);
         }
     }
 
@@ -61,7 +63,7 @@ public class Animal
         set
         {
             speed = value;
-            Events.OnChange(speed, GameEventsEnum.AnimalSpeedChanged);
+            Events.Raise(speed, GameEventsEnum.DataAnimalSpeedChanged);
         }
     }
 
@@ -73,7 +75,7 @@ public class Animal
         set
         {
             critChance = value;
-            Events.OnChange(critChance, GameEventsEnum.AnimalCritChanceChanged);
+            Events.Raise(critChance, GameEventsEnum.DataAnimalCritChanceChanged);
         }
     }
 
@@ -85,7 +87,7 @@ public class Animal
         set
         {
             critDamage = value;
-            Events.OnChange(critDamage, GameEventsEnum.AnimalCritDamageChanged);
+            Events.Raise(critDamage, GameEventsEnum.DataAnimalCritDamageChanged);
         }
     }
 

@@ -76,7 +76,7 @@ public class UIManager : MonoBehaviour
             var dialog = dialogStack.Pop();
 
             if (dialog.PauseGameOnOpen)
-                GameManager.Instance.OnPauseableMenuToggled(false);
+                Events.Raise(false, GameEventsEnum.EventGamePauseToggle);
 
             dialog.gameObject.SetActive(false);
         }

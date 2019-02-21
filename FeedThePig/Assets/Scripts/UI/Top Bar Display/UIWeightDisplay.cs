@@ -15,7 +15,7 @@ public class UIWeightDisplay : MonoBehaviour
     private void Start()
     {
         //   GameManager.Instance.OnAnimalWeightChanged += OnAnimalWeightChanged;
-        Events.Register<float>(GameEventsEnum.AnimalWeight, OnAnimalWeightChanged);
+        Events.Register<float>(GameEventsEnum.DataAnimalWeightChanged, OnAnimalWeightChanged);
     }
 
     private void OnAnimalWeightChanged(float amount)

@@ -41,7 +41,7 @@ public class UIDialog : MonoBehaviour, IIntializeInactive
         ToggleActive(true);
 
         if (pauseGameOnOpen)
-            GameManager.Instance.OnPauseableMenuToggled(true);
+            Events.Raise(false, GameEventsEnum.EventGamePauseToggle);
     }
 
     private void ToggleActive(bool value)

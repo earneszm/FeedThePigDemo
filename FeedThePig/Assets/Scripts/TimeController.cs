@@ -15,6 +15,8 @@ public class TimeController
     {
         this.rateObject = rateObject;
         this.startTime = startTime;
+
+        Events.Register<bool>(GameEventsEnum.EventGamePauseToggle, TogglePause);
     }
 
     public void DoUpdate(float deltaTime)

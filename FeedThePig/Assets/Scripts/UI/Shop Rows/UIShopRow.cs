@@ -28,8 +28,8 @@ public class UIShopRow : MonoBehaviour, IIntializeInactive
 
     public virtual void ForceStart()
     {
-        Events.Register<int>(GameEventsEnum.Gold, OnGoldAmountChanged);
-        Events.Register<float>(GameEventsEnum.GoldCostModifier, OnGoldCostModifierChanged);
+        Events.Register<int>(GameEventsEnum.DataGoldChanged, OnGoldAmountChanged);
+        Events.Register<float>(GameEventsEnum.DataGoldCostModifier, OnGoldCostModifierChanged);
     }
 
     protected virtual void OnValidate()

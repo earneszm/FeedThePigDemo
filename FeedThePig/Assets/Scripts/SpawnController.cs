@@ -22,6 +22,12 @@ public class SpawnController : MonoBehaviour
         spawners = ScriptableObjectUtils.GetAllInstances<Spawner>().ToList();
     }
 
+    private void Start()
+    {
+        Events.Register<int>(GameEventsEnum.EventStartLevel, LoadSpawner);
+        Events.Register(GameEventsEnum.EventAnimalDeath, Reset);
+    }
+
     public void LoadSpawner(int levelNumber)
     {
         Reset();

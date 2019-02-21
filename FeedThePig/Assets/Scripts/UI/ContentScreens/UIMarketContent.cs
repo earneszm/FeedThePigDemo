@@ -15,6 +15,6 @@ public class UIMarketContent : MonoBehaviour
 
     private void OnSellAnimalClick()
     {
-        GameManager.Instance.OnSellAnimal();
+        Events.Raise(GameEventsEnum.EventAnimalSold);
     }
 }

@@ -6,13 +6,13 @@ public class UIUpgradeShopRow : UIShopRow
 {
     public override void ForceStart()
     {
-        Events.Register<int>(GameEventsEnum.Upgrade, OnUpgradePurchased);
+        Events.Register<int>(GameEventsEnum.EventUpgrade, OnUpgradePurchased);
         base.ForceStart();
     }
 
     protected override void OnBuyButtonClick()
     {
-        GameManager.Instance.OnShopItemPurchased(item, fields.Icon.transform);
+        Events.Raise(item, fields.Icon.transform, GameEventsEnum.EventShopItemPurchased);
     }
 
     private void OnUpgradePurchased(int purchasedItemID)

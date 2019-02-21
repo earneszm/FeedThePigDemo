@@ -12,7 +12,7 @@ public class ScaleToWeightChanged : MonoBehaviour
 
     void Start()
     {
-        Events.Register<float>(GameEventsEnum.AnimalWeight, OnWeightChanged);
+        Events.Register<float>(GameEventsEnum.DataAnimalWeightChanged, OnWeightChanged);
     }
 
     private void OnWeightChanged(float weight)

@@ -21,8 +21,8 @@ public class UIFoodShopRow : UIShopRow
 
     public override void ForceStart()
     {
-        Events.Register<float>(GameEventsEnum.AnimalWeight, OnAnimalWeightChanged);
-        Events.Register<float>(GameEventsEnum.WeightModifier, OnWeightModifierChanged);
+        Events.Register<float>(GameEventsEnum.DataAnimalWeightChanged, OnAnimalWeightChanged);
+        Events.Register<float>(GameEventsEnum.DataWeightModifier, OnWeightModifierChanged);
 
         base.ForceStart();
     }
@@ -59,6 +59,6 @@ public class UIFoodShopRow : UIShopRow
 
     protected override void OnBuyButtonClick()
     {
-        GameManager.Instance.OnShopItemPurchased(item, fields.Icon.transform);
+        Events.Raise(item, fields.Icon.transform, GameEventsEnum.EventShopItemPurchased);
     }
 }

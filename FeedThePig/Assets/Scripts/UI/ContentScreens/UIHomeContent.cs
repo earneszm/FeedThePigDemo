@@ -23,11 +23,11 @@ public class UIHomeContent : MonoBehaviour, IIntializeInactive
 
     public void ForceStart()
     {
-        Events.Register<int>(GameEventsEnum.AnimalDamageChanged, OnDamageChanged);
-        Events.Register<int>(GameEventsEnum.AnimalArmorChanged, OnArmorChanged);
-        Events.Register<float>(GameEventsEnum.AnimalSpeedChanged, OnSpeedChanged);
-        Events.Register<float>(GameEventsEnum.AnimalCritChanceChanged, OnCritChanceChanged);
-        Events.Register<float>(GameEventsEnum.AnimalCritDamageChanged, OnCritDamageChanged);
+        Events.Register<int>(GameEventsEnum.DataAnimalDamageChanged, OnDamageChanged);
+        Events.Register<int>(GameEventsEnum.DataAnimalArmorChanged, OnArmorChanged);
+        Events.Register<float>(GameEventsEnum.DataAnimalSpeedChanged, OnSpeedChanged);
+        Events.Register<float>(GameEventsEnum.DataAnimalCritChanceChanged, OnCritChanceChanged);
+        Events.Register<float>(GameEventsEnum.DataAnimalCritDamageChanged, OnCritDamageChanged);
 
     }
 

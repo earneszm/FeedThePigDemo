@@ -14,12 +14,12 @@ public class LootOnDeath : MonoBehaviour, IDeathEvent
 
     public void Raise()
     {
-        GameManager.Instance.GainGold(Random.Range(goldMinAmount, goldMaxAmount));
+        Events.Raise(Random.Range(goldMinAmount, goldMaxAmount), GameEventsEnum.EventGoldDropped);
 
         var lootToDrop = GetLootToDrop();
 
         if (lootToDrop != null)
-            GameManager.Instance.CreateLoot(lootToDrop);
+            Events.Raise(lootToDrop, GameEventsEnum.EventLootDropped);
     }
 
     private LootItem GetLootToDrop()

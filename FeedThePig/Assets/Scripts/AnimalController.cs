@@ -35,7 +35,7 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
         layerMask = LayerMask.GetMask("Enemy");
         lastAttack = attackSpeed;
 
-        Events.Register<int>(GameEventsEnum.AnimalSold, OnAnimalSoldChanged);
+        Events.Register<int>(GameEventsEnum.DataAnimalSoldChanged, OnAnimalSoldChanged);
     }
 
     // Update is called once per frame
@@ -47,11 +47,13 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
         var hit = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y), gameObject.transform.right, attackRange, layerMask);
 
         if (CanMove(hit))
-            GameManager.Instance.OnPlayerMovementUpdate(true, animal.Speed);
-        //  transform.Translate(transform.right * speed * Time.deltaTime);
+        {
+            animal.IsPlayerMoving = true;
+            animal.PlayerDistance += animal.Speed * Time.deltaTime;
+        }
         else
         {
-            GameManager.Instance.OnPlayerMovementUpdate(false, 0);
+            animal.IsPlayerMoving = false;
             TryAttack(hit);
         }
     }

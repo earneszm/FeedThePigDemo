@@ -6,6 +6,6 @@ public class AdvanceLevelOnDeath : MonoBehaviour, IDeathEvent
 {
     public void Raise()
     {
-        GameManager.Instance.AdvanceLevel();
+        Events.Raise(GameEventsEnum.EventAdvanceLevel);
     }
 }

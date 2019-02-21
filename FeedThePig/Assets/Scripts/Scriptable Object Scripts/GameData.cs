@@ -26,11 +26,8 @@ public class GameData : ScriptableObject, IGoldRate
 
 
     public float goldPerWeightPrice = GameConstants.GoldPerWeightPrice;
-    public int CurrentLevel;   
-    public Animal Animal;
-
-    public float PlayerDistance;
-    public bool IsPlayerMoving;
+    public int currentLevel;   
+    public Animal Animal;    
 
     public List<int> PurchasedUpgradeIDs = new List<int>();    
     public List<Enemy> CurrentEnemies = new List<Enemy>();
@@ -46,28 +43,38 @@ public class GameData : ScriptableObject, IGoldRate
     public DateTime LastAppClosedTime      { get { return new DateTime(lastAppClosedTime); } private set { lastAppClosedTime = value.Ticks; } }
 
     // Properties with Events
-    public int   Gold                  { get { return gold;                } set { gold = value;                Events.OnChange(gold,                GameEventsEnum.Gold);                } }        
-    public int   AnimalsSold           { get { return animalsSold;         } set { animalsSold = value;         Events.OnChange(animalsSold,         GameEventsEnum.AnimalSold);          } }    
-    public int   TotalFoodBought       { get { return totalFoodBought;     } set { totalFoodBought = value;     Events.OnChange(totalFoodBought,     GameEventsEnum.TotalFoodBought);     } }
-    public float TotalWeightAcquired   { get { return totalWeightAcquired; } set { totalWeightAcquired = value; Events.OnChange(totalWeightAcquired, GameEventsEnum.TotalWeightAcquired); } }
-    public float GoldCostModifier      { get { return goldCostModifier;    } set { goldCostModifier = value;    Events.OnChange(goldCostModifier,    GameEventsEnum.GoldCostModifier);    } }
-    public float WeightModifier        { get { return weightModifier;      } set { weightModifier = value;      Events.OnChange(weightModifier,      GameEventsEnum.WeightModifier);      } }
-    public float GoldRatePerMinute     { get { return goldRatePerMinute;   } set { goldRatePerMinute = value;   Events.OnChange(goldRatePerMinute,   GameEventsEnum.GoldProduction);      } }
-    public float WeightRatePerMinute   { get { return weightRatePerMinute; } set { weightRatePerMinute = value; Events.OnChange(weightRatePerMinute, GameEventsEnum.WeightProduction);    } }
+    public int   Gold                  { get { return gold;                } set { gold = value;                Events.Raise(gold,                GameEventsEnum.DataGoldChanged);         } }        
+    public int   AnimalsSold           { get { return animalsSold;         } set { animalsSold = value;         Events.Raise(animalsSold,         GameEventsEnum.DataAnimalSoldChanged);   } }    
+    public int   TotalFoodBought       { get { return totalFoodBought;     } set { totalFoodBought = value;     Events.Raise(totalFoodBought,     GameEventsEnum.DataTotalFoodBought);     } }
+    public float TotalWeightAcquired   { get { return totalWeightAcquired; } set { totalWeightAcquired = value; Events.Raise(totalWeightAcquired, GameEventsEnum.DataTotalWeightAcquired); } }
+    public float GoldCostModifier      { get { return goldCostModifier;    } set { goldCostModifier = value;    Events.Raise(goldCostModifier,    GameEventsEnum.DataGoldCostModifier);    } }
+    public float WeightModifier        { get { return weightModifier;      } set { weightModifier = value;      Events.Raise(weightModifier,      GameEventsEnum.DataWeightModifier);      } }
+    public float GoldRatePerMinute     { get { return goldRatePerMinute;   } set { goldRatePerMinute = value;   Events.Raise(goldRatePerMinute,   GameEventsEnum.DataGoldProduction);      } }
+    public float WeightRatePerMinute   { get { return weightRatePerMinute; } set { weightRatePerMinute = value; Events.Raise(weightRatePerMinute, GameEventsEnum.DataWeightProduction);    } }
+
+    public int   CurrentLevel          { get { return currentLevel;        } set { currentLevel = value;        Events.Raise(currentLevel, GameEventsEnum.EventStartLevel); } }
 
     #endregion
 
     #region Helper Methods
+
+    // Public Helpers
 
     public void UpdateAnimal(Animal animal)
     {
         Animal = animal;
     }
 
+    public void AddGold(int amount)
+    {
+        Gold += amount;
+    }
+
     public void OnApplicationOpen()
     {
         LastLoginTime = DateTime.Now;
         ForceDataBind();
+        RegisterForEvents();
     }
 
     public void OnApplicationQuit()
@@ -91,20 +98,15 @@ public class GameData : ScriptableObject, IGoldRate
 
         foreach (var upgradeID in PurchasedUpgradeIDs)
         {
-            Events.OnChange(upgradeID, GameEventsEnum.Upgrade);
+            Events.Raise(upgradeID, GameEventsEnum.EventUpgrade);
         }
-    }
-
-    public void AddGold(int amount)
-    {
-        Gold += amount;
     }
 
     public void AddUpgrade(UpgradeShopItem upgrade)
     {        
         PurchasedUpgradeIDs.Add(upgrade.GetInstanceID());
 
-        Events.OnChange(upgrade.GetInstanceID(), GameEventsEnum.Upgrade);
+        Events.Raise(upgrade.GetInstanceID(), GameEventsEnum.EventUpgrade);
     }
 
     public void AddWeight(FoodShopItem item)
@@ -138,16 +140,32 @@ public class GameData : ScriptableObject, IGoldRate
         CurrentEnemies.Clear();
     }
 
-    public void AddLoot(LootItem item)
-    {
-        Loot.Add(item);
-        CalculateLootModifiers();
-    }
-
     public void ResetData()
     {
         ScriptableObjectUtils.Reset(this);
     }
+
+    public void ShowWelcomeBackData()
+    {
+        var dateDifference = DateTime.Now - LastAppClosedTime;
+        var goldEarned = Mathf.Min(MaxGoldPerOfflinePeriod, Mathf.FloorToInt((float)(dateDifference.TotalMinutes * GoldRatePerMinute)));
+
+        var maxWeightDeltaAllowed = Mathf.Max(0, GameConstants.MaxAnimalWeight - Animal.AnimalWeight);
+        var weightGained = Mathf.Min(MaxWeightPerOfflinePeriod, (float)(dateDifference.TotalMinutes * WeightRatePerMinute));
+        weightGained = Mathf.Min(maxWeightDeltaAllowed, weightGained);
+
+        Gold += goldEarned;
+        Animal.AnimalWeight += weightGained;
+        TotalWeightAcquired += weightGained;
+
+        UIManager.Instance.OpenDialog(DialogTypeEnum.WelcomeBack,
+            DateUtils.GetFriendlyTimeSpan(dateDifference),
+            goldEarned.ToString(),
+            weightGained.ToString("N2")
+            );
+    }
+
+    // Private Helpers
 
     private void CalculateLootModifiers()
     {
@@ -157,6 +175,75 @@ public class GameData : ScriptableObject, IGoldRate
         Animal.CritChance = GameConstants.StartingAnimalCritChance + Loot.Sum(x => x.CritChance);
         Animal.CritDamage = GameConstants.StartingAnimalCritDamage + Loot.Sum(x => x.CritDamage);
     }
+
+    private void HandleUpgrade(UpgradeShopItem upgrade)
+    {
+        switch (upgrade.UpgradeType)
+        {
+            case UpgradeTypeEnum.GoldProductionRate:
+                GoldRatePerMinute += upgrade.Value;
+                break;
+            case UpgradeTypeEnum.WeightProductionRate:
+                WeightRatePerMinute += upgrade.Value;
+                break;
+            case UpgradeTypeEnum.NotSet:
+            case UpgradeTypeEnum.MaxOfflineWeightAmount:
+            case UpgradeTypeEnum.MaxOfflineGoldAmount:
+            default:
+                Debug.LogError("Upgrade not implemented: " + nameof(upgrade.UpgradeType));
+                return;
+        }
+
+        AddUpgrade(upgrade);
+    }
+
+    #endregion
+
+    #region Events
+
+    private void RegisterForEvents()
+    {
+              
+        Events.Register<ShopItem, Transform>(GameEventsEnum.EventShopItemPurchased, OnShopItemPurchased);
+        Events.Register(GameEventsEnum.EventAnimalSold, OnSellAnimal);
+
+        Events.Register<LootItem>(GameEventsEnum.EventLootDropped, (item) => { Loot.Add(item); CalculateLootModifiers(); });
+        Events.Register<int>(GameEventsEnum.EventGoldDropped,    (amount) => { AddGold(amount); });
+        Events.Register(GameEventsEnum.EventAnimalDeath,               () => { ResetData(); ForceDataBind(); });
+        Events.Register(GameEventsEnum.EventAdvanceLevel,              () => { CurrentLevel++; });
+    }
+
+    private void OnShopItemPurchased(ShopItem item, Transform startingLocation)
+    {
+        // sanity check to make sure we can actually do this, if not we will fire the change event again
+        if (Gold < item.RelativePrice(GoldCostModifier))
+        {
+            Gold += 0;
+            return;
+        }
+
+        if (item is FoodShopItem && Animal.CanAddWeight)
+            AddWeight(item as FoodShopItem);
+        else if (item is UpgradeShopItem)
+            HandleUpgrade(item as UpgradeShopItem);
+        else
+            return;
+    }
+
+    private void OnSellAnimal()
+    {
+        var goldAmountFromSale = Mathf.FloorToInt(Animal.AnimalWeight * goldPerWeightPrice);
+        var saleWeight = Animal.AnimalWeight;
+
+        AddGold(goldAmountFromSale);
+        AnimalsSold++;
+        Animal.AnimalWeight = 100f;
+
+        ResetEnemies();
+        UIManager.Instance.OpenDialog(DialogTypeEnum.AnimalSale, saleWeight.ToString("N2"), goldAmountFromSale.ToString());
+    }
+
+    
 
     #endregion
 }
