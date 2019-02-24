@@ -32,7 +32,7 @@ public class Spawner : ScriptableObject
             Debug.LogError("Incorrect naming format for spawner: " + name);
     }
 
-    public List<Enemy> Spawn(Transform parent, Transform spawnLocation, ITakeDamage animalTarget, int? overrideNumToSpawn = null, bool isLastEnemy = false)
+    public List<Enemy> Spawn(Vector3 spawnLocation, ITakeDamage animalTarget, int? overrideNumToSpawn = null, bool isLastEnemy = false)
     {
         Enemy prefabToSpawn = isLastEnemy ? bossPrefab : enemyPrefab;
 
@@ -45,7 +45,7 @@ public class Spawner : ScriptableObject
         var enemyList = new List<Enemy>();
         for (int i = 1; i <= overrideNumToSpawn; i++)
         {
-            var go = Instantiate(prefabToSpawn, spawnLocation.position, Quaternion.identity, parent);
+            var go = prefabToSpawn.Get<Enemy>(spawnLocation, Quaternion.identity);
             go.Initialize(animalTarget);
             enemyList.Add(go);
         }

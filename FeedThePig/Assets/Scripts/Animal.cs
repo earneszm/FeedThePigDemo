@@ -31,20 +31,37 @@ public class Animal
         }        
     }
 
-    [SerializeField]
-    private int damage = GameConstants.StartingAnimalDamage;
     public int Damage
     {
-        get { return damage; }
+        get { return UnityEngine.Random.Range(MinDamage, MaxDamage); }
+    }
+
+    [SerializeField]
+    private int minDamage = GameConstants.StartingAnimalMinDamage;
+    public int MinDamage
+    {
+        get { return minDamage; }
         set
         {
-            damage = value;
-            Events.Raise(damage, GameEventsEnum.DataAnimalDamageChanged);
+            minDamage = value;
+            Events.Raise(minDamage, MaxDamage, GameEventsEnum.DataAnimalDamageChanged);
         }
     }
 
     [SerializeField]
-    private int armor = GameConstants.StartingAnimalDamage;
+    private int maxDamage = GameConstants.StartingAnimalMaxDamage;
+    public int MaxDamage
+    {
+        get { return maxDamage; }
+        set
+        {
+            maxDamage = value;
+            Events.Raise(MinDamage, maxDamage, GameEventsEnum.DataAnimalDamageChanged);
+        }
+    }
+
+    [SerializeField]
+    private int armor = GameConstants.StartingAnimalArmor;
     public int Armor
     {
         get { return armor; }
@@ -93,10 +110,21 @@ public class Animal
 
     public bool CanAddWeight { get { return AnimalWeight < GameConstants.MaxAnimalWeight; } }
 
+    public void ResetData()
+    {
+        AnimalWeight = GameConstants.StartingAnimalWeight;
+        MinDamage    = GameConstants.StartingAnimalMinDamage;
+        MaxDamage    = GameConstants.StartingAnimalMaxDamage;
+        Armor        = GameConstants.StartingAnimalArmor;
+        Speed        = GameConstants.StartingAnimalSpeed;
+        CritChance   = GameConstants.StartingAnimalCritChance;
+        CritDamage   = GameConstants.StartingAnimalCritDamage;
+    }
+
     public void ForceDataBind()
     {
         AnimalWeight += 0;
-        Damage += 0;
+        MinDamage += 0; 
         Armor += 0;
         Speed += 0;
         CritChance += 0;
@@ -106,7 +134,7 @@ public class Animal
     public int RollDamage()
     {
         if (UnityEngine.Random.Range(1, 100) <= CritChance)
-            return Mathf.FloorToInt(Damage * (1 + CritDamage));
+            return Mathf.FloorToInt(Damage * (1 + (CritDamage / 100)));
 
         return Damage;
     }

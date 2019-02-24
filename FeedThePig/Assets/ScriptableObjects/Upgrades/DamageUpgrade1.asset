@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a30c4715099cf7d4796fd9a97b79c222, type: 3}
+  m_Name: DamageUpgrade1
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeShopItem
+  Name: Damage Upgrade 1
+  Description: Increase Damage by {0}.
+  BasePrice: 100
+  Icon: {fileID: 21300000, guid: 9a132a4db73bbbe4c9fcdb7b573c7bc8, type: 3}
+  IsActive: 1
+  UpgradeType: 5
+  Value: 5

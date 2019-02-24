@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Enemy : MonoBehaviour, ITakeDamage, IEnemy, IAttack
+
+public class Enemy : PooledMonoBehaviour, ITakeDamage, IEnemy, IAttack
 {
     [SerializeField]
     private int health = 35;
@@ -17,6 +18,10 @@ public class Enemy : MonoBehaviour, ITakeDamage, IEnemy, IAttack
     private int maxAttackDamage = 5;
     [SerializeField]
     private Image healthImage;
+    [SerializeField]
+    private Transform damageTextLocation;
+
+    public Transform DamageTextLocation { get { return damageTextLocation; } set { damageTextLocation = value; } }
 
     public int Health { get { return health; } }
     public int MaxHealth { get { return maxHealth; } }
@@ -58,6 +63,8 @@ public class Enemy : MonoBehaviour, ITakeDamage, IEnemy, IAttack
        // Debug.Log(name + " takes " + damage + " damage");
         health -= damage;
 
+        Events.Raise(damage.ToString(), DamageTextLocation, "", GameEventsEnum.EventCreateDamageText);
+        
         UpdateHealthBar();
 
         if (health <= 0)
@@ -91,6 +98,11 @@ public class Enemy : MonoBehaviour, ITakeDamage, IEnemy, IAttack
             isDoneMoving = true;
          //   Debug.Log("Enemy is done moving");
         }
+    }
+
+    public void ForceReset()
+    {
+        ReturnToPool();
     }
 
     public void Attack(ITakeDamage target)

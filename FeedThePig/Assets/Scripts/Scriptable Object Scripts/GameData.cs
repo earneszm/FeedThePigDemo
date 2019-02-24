@@ -52,7 +52,7 @@ public class GameData : ScriptableObject, IGoldRate
     public float GoldRatePerMinute     { get { return goldRatePerMinute;   } set { goldRatePerMinute = value;   Events.Raise(goldRatePerMinute,   GameEventsEnum.DataGoldProduction);      } }
     public float WeightRatePerMinute   { get { return weightRatePerMinute; } set { weightRatePerMinute = value; Events.Raise(weightRatePerMinute, GameEventsEnum.DataWeightProduction);    } }
 
-    public int   CurrentLevel          { get { return currentLevel;        } set { currentLevel = value;        Events.Raise(currentLevel, GameEventsEnum.EventStartLevel); } }
+    public int   CurrentLevel          { get { return currentLevel;        } set { currentLevel = value;        Events.Raise(currentLevel, GameEventsEnum.EventLoadLevel); } }
 
     #endregion
 
@@ -134,7 +134,7 @@ public class GameData : ScriptableObject, IGoldRate
     {
         foreach (var enemy in CurrentEnemies)
         {
-            enemy.gameObject.SetActive(false);
+            enemy.ForceReset();
         }
 
         CurrentEnemies.Clear();
@@ -143,6 +143,15 @@ public class GameData : ScriptableObject, IGoldRate
     public void ResetData()
     {
         ScriptableObjectUtils.Reset(this);
+    }
+
+    private void ResetLevelData()
+    {
+        Gold = GameConstants.StartingGold;
+
+        Loot.Clear();
+        ResetEnemies();
+        Animal.ResetData();
     }
 
     public void ShowWelcomeBackData()
@@ -169,7 +178,8 @@ public class GameData : ScriptableObject, IGoldRate
 
     private void CalculateLootModifiers()
     {
-        Animal.Damage = GameConstants.StartingAnimalDamage + Loot.Sum(x => x.Damage);
+        Animal.MinDamage = GameConstants.StartingAnimalMinDamage + Loot.Sum(x => x.Damage);
+        Animal.MaxDamage = GameConstants.StartingAnimalMaxDamage + Loot.Sum(x => x.Damage);
         Animal.Speed  = GameConstants.StartingAnimalSpeed + Loot.Sum(x => x.Speed);
         Animal.Armor  = GameConstants.StartingAnimalArmor + Loot.Sum(x => x.Armor);
         Animal.CritChance = GameConstants.StartingAnimalCritChance + Loot.Sum(x => x.CritChance);
@@ -186,6 +196,10 @@ public class GameData : ScriptableObject, IGoldRate
             case UpgradeTypeEnum.WeightProductionRate:
                 WeightRatePerMinute += upgrade.Value;
                 break;
+            case UpgradeTypeEnum.DamageModified:
+                Animal.MinDamage += (int)upgrade.Value;
+                Animal.MaxDamage += (int)upgrade.Value;
+                break;
             case UpgradeTypeEnum.NotSet:
             case UpgradeTypeEnum.MaxOfflineWeightAmount:
             case UpgradeTypeEnum.MaxOfflineGoldAmount:
@@ -195,6 +209,50 @@ public class GameData : ScriptableObject, IGoldRate
         }
 
         AddUpgrade(upgrade);
+    }
+
+    private IEnumerator AddGoldOverTime(int amountToAdd, float duration = .75f, int totalSteps = 10)
+    {
+        var startingGold = Gold;
+        if (duration == 0f)
+            AddGold(amountToAdd);
+
+        var stepsToGo = totalSteps;
+        var stepDistance = duration / totalSteps;
+        
+        var amountStep = amountToAdd / totalSteps;
+        var remainder = amountToAdd % totalSteps;
+
+        var total = remainder + amountStep;
+        AddGold(remainder + amountStep);
+        stepsToGo--;
+
+        var timePassed = 0f;
+        var timeStep = 0f;
+        while (timePassed <= duration)
+        {
+            timePassed += Time.deltaTime;
+            timeStep += Time.deltaTime;
+    
+            if (timeStep >= stepDistance && stepsToGo > 0)
+            {
+                stepsToGo--;
+                timeStep = 0f;
+                AddGold(amountStep);
+                total += amountStep;
+            }
+            yield return null;
+        }
+
+
+        // ensure the amount is correct
+        // if (total < amountToAdd)
+        // {
+        //     AddGold(amountToAdd - total);
+        //     total += amountToAdd - total;
+        // }
+
+    //    Debug.Log(string.Format("AddGoldOverTime: Try to add: {0}. Total Added: {1}. Amount Per Step: {2}. Remainder: {3}. StartingGold: {4}. EndingGold: {5}", amountToAdd, total, amountStep, remainder, startingGold, Gold));
     }
 
     #endregion
@@ -208,9 +266,10 @@ public class GameData : ScriptableObject, IGoldRate
         Events.Register(GameEventsEnum.EventAnimalSold, OnSellAnimal);
 
         Events.Register<LootItem>(GameEventsEnum.EventLootDropped, (item) => { Loot.Add(item); CalculateLootModifiers(); });
-        Events.Register<int>(GameEventsEnum.EventGoldDropped,    (amount) => { AddGold(amount); });
-        Events.Register(GameEventsEnum.EventAnimalDeath,               () => { ResetData(); ForceDataBind(); });
+        Events.Register<int>(GameEventsEnum.EventGoldGained,     (amount) => { Events.StartCoroutine(AddGoldOverTime(amount)); });
+        Events.Register(GameEventsEnum.EventAnimalDeath,               () => { ResetLevelData(); CurrentLevel = 1; });
         Events.Register(GameEventsEnum.EventAdvanceLevel,              () => { CurrentLevel++; });
+        Events.Register(GameEventsEnum.EventGameRestart,               () => { ResetLevelData(); CurrentLevel = 1; });
     }
 
     private void OnShopItemPurchased(ShopItem item, Transform startingLocation)

@@ -1,5 +1,65 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2905237354599611497
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2709460370575059325}
+  m_Layer: 9
+  m_Name: LootSpawnPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2709460370575059325
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2905237354599611497}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.69, y: 0.41, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6702579861980597506}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5381345966658074019
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7056194088301121707}
+  m_Layer: 9
+  m_Name: DamageTextPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7056194088301121707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5381345966658074019}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.67, y: 1.87, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6702579861980597506}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6702579861856608959
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,6 +170,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6702579861856608958}
+  - {fileID: 2709460370575059325}
+  - {fileID: 7056194088301121707}
   - {fileID: 3301978724009698123}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -152,12 +214,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d266b9c1e8aebc94097ace53b73c4eed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialPoolSize: 50
   health: 35
   maxHealth: 35
   attackSpeed: 2
   minAttackDamage: 1
   maxAttackDamage: 5
   healthImage: {fileID: 6247603265470739459}
+  damageTextLocation: {fileID: 7056194088301121707}
 --- !u!114 &6904358729795007780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,6 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4951c6db20183ce4292017f811b20768, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lootSpawnsFromPosition: {fileID: 2709460370575059325}
   goldMinAmount: 5
   goldMaxAmount: 10
   possibleLoot:
@@ -214,7 +279,7 @@ RectTransform:
   m_Children:
   - {fileID: 3085205516940622478}
   m_Father: {fileID: 6702579861980597506}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

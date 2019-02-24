@@ -8,6 +8,10 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
     private float attackRange = 5;
     [SerializeField]
     private float attackSpeed = 2;
+    [SerializeField]
+    private Transform damageTextLocation;
+
+    public Transform DamageTextLocation { get { return damageTextLocation; } set { damageTextLocation = value; } }
 
     private float lastAttack = 0f;
 
@@ -26,6 +30,7 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
     public void TakeDamage(int damage)
     {
         animal.AnimalWeight -= damage;
+        Events.Raise(damage.ToString(), DamageTextLocation, "playerhit", GameEventsEnum.EventCreateDamageText);
     }
 
 
@@ -83,7 +88,7 @@ public class AnimalController : MonoBehaviour, ITakeDamage, IAttack
     // else return false
     private bool CanMove(RaycastHit2D hit)
     {        
-        if (hit.collider != null)
+        if (hit.collider != null || TimeController.IsGamePaused)
             return false;
 
         return true;

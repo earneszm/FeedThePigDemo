@@ -4,5 +4,6 @@
     GoldProductionRate,
     MaxOfflineGoldAmount,
     WeightProductionRate,
-    MaxOfflineWeightAmount
+    MaxOfflineWeightAmount,
+    DamageModified
 }

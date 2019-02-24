@@ -12,12 +12,20 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; set; }
     private bool IsInitializeDone;
 
+    // Testing
+    public bool IsTestMode;
+
     // Data
     [SerializeField]
     private GameData gameData;
     [SerializeField]
     private AnimalController animalObject;
-    
+    [SerializeField]
+    private GameObject testObject;
+    [SerializeField]
+    private RectTransform testSpot;
+
+
     // Systems Controllers
     private TimeController timeController;
     private EffectsManager effectsManager;
@@ -79,5 +87,20 @@ public class GameManager : MonoBehaviour
         timeController.TogglePause(false);
 
         IsInitializeDone = true;
-    }  
+
+        // test
+        //testObject.SetTarget(Camera.main.ScreenToWorldPoint(testSpot.transform.position));
+        //testObject.StartMoving();
+        
+    }
+
+    #region Public Methods
+
+    public void GameOver()
+    {        
+        Events.Raise(GameEventsEnum.EventGameOver);
+        UIManager.Instance.OpenDialog(DialogTypeEnum.GameOver);
+    }
+
+    #endregion
 }

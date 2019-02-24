@@ -23,7 +23,7 @@ public class UIHomeContent : MonoBehaviour, IIntializeInactive
 
     public void ForceStart()
     {
-        Events.Register<int>(GameEventsEnum.DataAnimalDamageChanged, OnDamageChanged);
+        Events.Register<int, int>(GameEventsEnum.DataAnimalDamageChanged, OnDamageChanged);
         Events.Register<int>(GameEventsEnum.DataAnimalArmorChanged, OnArmorChanged);
         Events.Register<float>(GameEventsEnum.DataAnimalSpeedChanged, OnSpeedChanged);
         Events.Register<float>(GameEventsEnum.DataAnimalCritChanceChanged, OnCritChanceChanged);
@@ -31,9 +31,9 @@ public class UIHomeContent : MonoBehaviour, IIntializeInactive
 
     }
 
-    private void OnDamageChanged(int amount)
+    private void OnDamageChanged(int min, int max)
     {
-        damage.UpdateContent(amount);
+        damage.UpdateContent(min, max);
     }
 
     private void OnArmorChanged(int number)

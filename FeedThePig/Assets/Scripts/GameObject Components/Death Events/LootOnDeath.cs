@@ -6,6 +6,8 @@ using System.Linq;
 public class LootOnDeath : MonoBehaviour, IDeathEvent
 {
     [SerializeField]
+    private Transform lootSpawnsFromPosition;
+    [SerializeField]
     private int goldMinAmount;
     [SerializeField]
     private int goldMaxAmount;
@@ -14,7 +16,7 @@ public class LootOnDeath : MonoBehaviour, IDeathEvent
 
     public void Raise()
     {
-        Events.Raise(Random.Range(goldMinAmount, goldMaxAmount), GameEventsEnum.EventGoldDropped);
+        Events.Raise(Random.Range(goldMinAmount, goldMaxAmount), lootSpawnsFromPosition, GameEventsEnum.EventGoldSpawned);
 
         var lootToDrop = GetLootToDrop();
 

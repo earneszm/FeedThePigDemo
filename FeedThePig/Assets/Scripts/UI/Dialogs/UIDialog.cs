@@ -16,6 +16,9 @@ public class UIDialog : MonoBehaviour, IIntializeInactive
     private bool pauseGameOnOpen = true;
     public bool PauseGameOnOpen { get { return pauseGameOnOpen; } }
 
+    [SerializeField]
+    private GameEventsEnum onConfirmEvent;
+
     public virtual void ForceAwake()
     {        
     }
@@ -34,14 +37,19 @@ public class UIDialog : MonoBehaviour, IIntializeInactive
     public virtual void OnDialogOpen(object data)
     {
         ToggleActive(true);
+        OnDialogOpenBase();
     }
 
     public virtual void OnDialogOpen(params string[] values)
     {
         ToggleActive(true);
+        OnDialogOpenBase();
+    }
 
+    private void OnDialogOpenBase()
+    {
         if (pauseGameOnOpen)
-            Events.Raise(false, GameEventsEnum.EventGamePauseToggle);
+            Events.Raise(true, GameEventsEnum.EventGamePauseToggle);
     }
 
     private void ToggleActive(bool value)
@@ -51,7 +59,10 @@ public class UIDialog : MonoBehaviour, IIntializeInactive
     }
 
     protected virtual void OnConfirmClick()
-    {      
+    {
+        if (onConfirmEvent != 0)
+            Events.Raise(onConfirmEvent);
+
         UIManager.Instance.CloseDialog();        
     }
 }

@@ -8,11 +8,12 @@ public static class Events
 {
     private static Dictionary<GameEventsEnum, EventControllerBase> actionList = new Dictionary<GameEventsEnum, EventControllerBase>();
 
+    #region Raise
     public static void Raise(GameEventsEnum name)// where T : struct
     {
         AddIfNotExists(name);
 
-        actionList[name].Raise(null);
+        actionList[name].Raise();
     }
 
     public static void Raise<T>(T data, GameEventsEnum name)// where T : struct
@@ -25,28 +26,43 @@ public static class Events
     public static void Raise<T, V>(T data, V data2, GameEventsEnum name)// where T : struct
     {
         AddIfNotExists<T, V>(name);
-
-        actionList[name].Raise(data);
+        actionList[name].Raise(data, data2);
     }
 
-    public static void Register(GameEventsEnum name, Action callback)// where T : struct
+    public static void Raise<T, V, U>(T data, V data2, U data3, GameEventsEnum name)// where T : struct
+    {
+        AddIfNotExists<T, V, U>(name);
+        actionList[name].Raise(data, data2, data3);
+    }
+    #endregion
+
+    #region Register
+    public static void Register(GameEventsEnum name, Action callback)
     {
         AddIfNotExists(name);
         actionList[name].Add(callback);
     }
 
-    public static void Register<T>(GameEventsEnum name, Action<T> callback)// where T : struct
+    public static void Register<T>(GameEventsEnum name, Action<T> callback)
     {
         AddIfNotExists<T>(name);
         actionList[name].Add(callback);
     }
 
-    public static void Register<T, V>(GameEventsEnum name, Action<T, V> callback)// where T : struct
+    public static void Register<T, V>(GameEventsEnum name, Action<T, V> callback)
     {
         AddIfNotExists<T, V>(name);
         actionList[name].Add(callback);
     }
 
+    public static void Register<T, V, U>(GameEventsEnum name, Action<T, V, U> callback)
+    {
+        AddIfNotExists<T, V, U>(name);
+        actionList[name].Add(callback);
+    }
+    #endregion
+
+    #region AddIfNotExists
     private static void AddIfNotExists(GameEventsEnum name)
     {
         if (actionList.ContainsKey(name) == false)
@@ -64,11 +80,27 @@ public static class Events
         if (actionList.ContainsKey(name) == false)
             actionList[name] = new EventController<T, V>();
     }
+
+    private static void AddIfNotExists<T, V, U>(GameEventsEnum name)
+    {
+        if (actionList.ContainsKey(name) == false)
+            actionList[name] = new EventController<T, V, U>();
+    }
+
+    #endregion
+
+    public static void StartCoroutine(IEnumerator coroutine, MonoBehaviour behaviorToRunOn = null)
+    {
+        if(behaviorToRunOn == null)
+            behaviorToRunOn = GameManager.Instance;
+
+        behaviorToRunOn.StartCoroutine(coroutine);
+    }
 }
 
 public abstract class EventControllerBase
 {
-    public abstract void Raise(object data, object data2 = null);
+    public abstract void Raise(object data = null, object data2 = null, object data3 = null);
     public abstract void Add(Delegate callback);
 }
 
@@ -77,7 +109,7 @@ public class EventController : EventControllerBase
     protected List<Delegate> subscribers = new List<Delegate>();
     protected event Action OnRaise;
 
-    public override void Raise(object data, object data2 = null)
+    public override void Raise(object data = null, object data2 = null, object data3 = null)
     {
         OnRaise?.Invoke();
     }
@@ -108,7 +140,7 @@ public class EventController<T> : EventControllerBase
     private List<Action<T>> subscribers = new List<Action<T>>();
     private event Action<T> OnRaise;
 
-    public override void Raise(object data, object data2 = null)
+    public override void Raise(object data = null, object data2 = null, object data3 = null)
     {
         if (data is T == false)
             Debug.LogError(string.Format("Invalid cast in events. Expected type: {0}. Received Type: {1}", typeof(T).Name, data.GetType().Name));
@@ -148,11 +180,11 @@ public class EventController<T, V> : EventControllerBase
     private List<Action<T, V>> subscribers = new List<Action<T, V>>();
     private event Action<T, V> OnRaise;
 
-    public override void Raise(object data1, object data2)
+    public override void Raise(object data = null, object data2 = null, object data3 = null)
     {
-        if (data1 is T == false || data2 is V == false)
-            Debug.LogError(string.Format("Invalid cast in events. Expected typse: {0} and {1}. Received Types: {2} and {3}", typeof(T).Name, typeof(V).Name, data1.GetType().Name, data2.GetType().Name));
-        OnRaise?.Invoke((T)data1, (V)data2);
+        if (data is T == false || data2 is V == false)
+            Debug.LogError(string.Format("Invalid cast in events. Expected typse: {0} and {1}. Received Types: {2} and {3}", typeof(T).Name, typeof(V).Name, data.GetType().Name, data2.GetType().Name));
+        OnRaise?.Invoke((T)data, (V)data2);
     }
 
     public override void Add(Delegate callback)
@@ -183,36 +215,84 @@ public class EventController<T, V> : EventControllerBase
     }
 }
 
+public class EventController<T, V, U> : EventControllerBase
+{
+    private List<Action<T, V, U>> subscribers = new List<Action<T, V, U>>();
+    private event Action<T, V, U> OnRaise;
+
+    public override void Raise(object data = null, object data2 = null, object data3 = null)
+    {
+        if (data is T == false || data2 is V == false)
+            Debug.LogError(string.Format("Invalid cast in events. Expected typse: {0} and {1}. Received Types: {2} and {3}", typeof(T).Name, typeof(V).Name, data.GetType().Name, data2.GetType().Name));
+        OnRaise?.Invoke((T)data, (V)data2, (U)data3);
+    }
+
+    public override void Add(Delegate callback)
+    {
+        if (callback is Action<T, V, U>)
+        {
+            subscribers.Add((Action<T, V, U>)callback);
+            OnRaise += (Action<T, V, U>)callback;
+        }
+        else
+        {
+            Debug.LogError("Cannot register with this callback");
+        }
+    }
+
+    public virtual void RemoveSubscriber(Action<T, V, U> d)
+    {
+        subscribers.Remove(d);
+        OnRaise -= d;
+    }
+
+    public void UnhookSubscribers()
+    {
+        foreach (var subscriber in subscribers)
+        {
+            OnRaise -= subscriber;
+        }
+    }
+}
+
 public enum GameEventsEnum
 {
     // game stats
     DataGoldChanged = 1,
-    DataAnimalWeightChanged,
-    DataGoldCostModifier,
-    DataWeightModifier,
-    DataGoldProduction,
-    DataAnimalSoldChanged,
-    DataTotalFoodBought,
-    DataTotalWeightAcquired,
-    DataWeightProduction,
+    DataAnimalWeightChanged = 2,
+    DataGoldCostModifier = 3,
+    DataWeightModifier = 4,
+    DataGoldProduction = 5,
+    DataAnimalSoldChanged = 6,
+    DataTotalFoodBought = 7,
+    DataTotalWeightAcquired = 8,
+    DataWeightProduction = 9,
 
     // animal stats
-    DataAnimalDamageChanged,
-    DataAnimalArmorChanged,
-    DataAnimalSpeedChanged,
-    DataAnimalCritChanceChanged,
-    DataAnimalCritDamageChanged,
+    DataAnimalDamageChanged = 10,
+    DataAnimalArmorChanged = 11,
+    DataAnimalSpeedChanged = 12,
+    DataAnimalCritChanceChanged = 13,
+    DataAnimalCritDamageChanged = 14,
     
     // game events
-    EventUpgrade,
-    EventAnimalDeath,    
-    EventLootDropped,
-    EventGoldDropped,
-    EventShopItemPurchased,
-    EventAnimalSold,
+    EventUpgrade = 15,
+    EventAnimalDeath = 16,    
+    EventLootDropped = 17,
+    EventGoldSpawned = 18,
+    EventGoldPickedUp = 19,
+    EventGoldGained = 20,
+    EventShopItemPurchased = 21,
+    EventAnimalSold = 22,
 
     // level management
-    EventGamePauseToggle,
-    EventStartLevel,
-    EventAdvanceLevel
+    EventGamePauseToggle = 23,
+    EventLoadLevel = 24,
+    EventStartLevel = 25,
+    EventAdvanceLevel = 26,
+    EventGameOver = 27,
+    EventGameRestart = 28,
+
+    // misc
+    EventCreateDamageText = 29
 }

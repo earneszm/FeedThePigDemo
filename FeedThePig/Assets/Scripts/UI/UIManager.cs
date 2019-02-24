@@ -89,7 +89,8 @@ public enum DialogTypeEnum
 {
     NotSet,
     AnimalSale,
-    WelcomeBack
+    WelcomeBack,
+    GameOver
 }
 
 public enum CustomButtonTypeEnum
