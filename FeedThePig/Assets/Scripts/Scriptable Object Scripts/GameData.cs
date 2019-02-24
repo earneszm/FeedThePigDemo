@@ -211,49 +211,7 @@ public class GameData : ScriptableObject, IGoldRate
         AddUpgrade(upgrade);
     }
 
-    private IEnumerator AddGoldOverTime(int amountToAdd, float duration = .75f, int totalSteps = 10)
-    {
-        var startingGold = Gold;
-        if (duration == 0f)
-            AddGold(amountToAdd);
-
-        var stepsToGo = totalSteps;
-        var stepDistance = duration / totalSteps;
-        
-        var amountStep = amountToAdd / totalSteps;
-        var remainder = amountToAdd % totalSteps;
-
-        var total = remainder + amountStep;
-        AddGold(remainder + amountStep);
-        stepsToGo--;
-
-        var timePassed = 0f;
-        var timeStep = 0f;
-        while (timePassed <= duration)
-        {
-            timePassed += Time.deltaTime;
-            timeStep += Time.deltaTime;
     
-            if (timeStep >= stepDistance && stepsToGo > 0)
-            {
-                stepsToGo--;
-                timeStep = 0f;
-                AddGold(amountStep);
-                total += amountStep;
-            }
-            yield return null;
-        }
-
-
-        // ensure the amount is correct
-        // if (total < amountToAdd)
-        // {
-        //     AddGold(amountToAdd - total);
-        //     total += amountToAdd - total;
-        // }
-
-    //    Debug.Log(string.Format("AddGoldOverTime: Try to add: {0}. Total Added: {1}. Amount Per Step: {2}. Remainder: {3}. StartingGold: {4}. EndingGold: {5}", amountToAdd, total, amountStep, remainder, startingGold, Gold));
-    }
 
     #endregion
 
@@ -265,8 +223,8 @@ public class GameData : ScriptableObject, IGoldRate
         Events.Register<ShopItem, Transform>(GameEventsEnum.EventShopItemPurchased, OnShopItemPurchased);
         Events.Register(GameEventsEnum.EventAnimalSold, OnSellAnimal);
 
-        Events.Register<LootItem>(GameEventsEnum.EventLootDropped, (item) => { Loot.Add(item); CalculateLootModifiers(); });
-        Events.Register<int>(GameEventsEnum.EventGoldGained,     (amount) => { Events.StartCoroutine(AddGoldOverTime(amount)); });
+        Events.Register<LootItem>(GameEventsEnum.EventLootGained,  (item) => { Loot.Add(item); CalculateLootModifiers(); });
+        Events.Register<int>(GameEventsEnum.EventGoldGained,     (amount) => { Events.StartCoroutine(Utils.IncrementOverTime(amount, AddGold)); });
         Events.Register(GameEventsEnum.EventAnimalDeath,               () => { ResetLevelData(); CurrentLevel = 1; });
         Events.Register(GameEventsEnum.EventAdvanceLevel,              () => { CurrentLevel++; });
         Events.Register(GameEventsEnum.EventGameRestart,               () => { ResetLevelData(); CurrentLevel = 1; });

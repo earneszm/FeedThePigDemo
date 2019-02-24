@@ -34,6 +34,12 @@ public static class Events
         AddIfNotExists<T, V, U>(name);
         actionList[name].Raise(data, data2, data3);
     }
+
+    public static void Raise<T, V, U, X>(T data, V data2, U data3, X data4, GameEventsEnum name)// where T : struct
+    {
+        AddIfNotExists<T, V, U>(name);
+        actionList[name].Raise(data, data2, data3, data4);
+    }
     #endregion
 
     #region Register
@@ -58,6 +64,12 @@ public static class Events
     public static void Register<T, V, U>(GameEventsEnum name, Action<T, V, U> callback)
     {
         AddIfNotExists<T, V, U>(name);
+        actionList[name].Add(callback);
+    }
+
+    public static void Register<T, V, U, X>(GameEventsEnum name, Action<T, V, U, X> callback)
+    {
+        AddIfNotExists<T, V, U, X>(name);
         actionList[name].Add(callback);
     }
     #endregion
@@ -87,6 +99,12 @@ public static class Events
             actionList[name] = new EventController<T, V, U>();
     }
 
+    private static void AddIfNotExists<T, V, U, X>(GameEventsEnum name)
+    {
+        if (actionList.ContainsKey(name) == false)
+            actionList[name] = new EventController<T, V, U, X>();
+    }
+
     #endregion
 
     public static void StartCoroutine(IEnumerator coroutine, MonoBehaviour behaviorToRunOn = null)
@@ -100,7 +118,7 @@ public static class Events
 
 public abstract class EventControllerBase
 {
-    public abstract void Raise(object data = null, object data2 = null, object data3 = null);
+    public abstract void Raise(object data = null, object data2 = null, object data3 = null, object data4 = null);
     public abstract void Add(Delegate callback);
 }
 
@@ -109,7 +127,7 @@ public class EventController : EventControllerBase
     protected List<Delegate> subscribers = new List<Delegate>();
     protected event Action OnRaise;
 
-    public override void Raise(object data = null, object data2 = null, object data3 = null)
+    public override void Raise(object data = null, object data2 = null, object data3 = null, object data4 = null)
     {
         OnRaise?.Invoke();
     }
@@ -140,7 +158,7 @@ public class EventController<T> : EventControllerBase
     private List<Action<T>> subscribers = new List<Action<T>>();
     private event Action<T> OnRaise;
 
-    public override void Raise(object data = null, object data2 = null, object data3 = null)
+    public override void Raise(object data = null, object data2 = null, object data3 = null, object data4 = null)
     {
         if (data is T == false)
             Debug.LogError(string.Format("Invalid cast in events. Expected type: {0}. Received Type: {1}", typeof(T).Name, data.GetType().Name));
@@ -180,10 +198,10 @@ public class EventController<T, V> : EventControllerBase
     private List<Action<T, V>> subscribers = new List<Action<T, V>>();
     private event Action<T, V> OnRaise;
 
-    public override void Raise(object data = null, object data2 = null, object data3 = null)
+    public override void Raise(object data = null, object data2 = null, object data3 = null, object data4 = null)
     {
-        if (data is T == false || data2 is V == false)
-            Debug.LogError(string.Format("Invalid cast in events. Expected typse: {0} and {1}. Received Types: {2} and {3}", typeof(T).Name, typeof(V).Name, data.GetType().Name, data2.GetType().Name));
+     //   if (data is T == false || data2 is V == false)
+     //       Debug.LogError(string.Format("Invalid cast in events. Expected typse: {0} and {1}. Received Types: {2} and {3}", typeof(T).Name, typeof(V).Name, data.GetType().Name, data2.GetType().Name));
         OnRaise?.Invoke((T)data, (V)data2);
     }
 
@@ -220,10 +238,10 @@ public class EventController<T, V, U> : EventControllerBase
     private List<Action<T, V, U>> subscribers = new List<Action<T, V, U>>();
     private event Action<T, V, U> OnRaise;
 
-    public override void Raise(object data = null, object data2 = null, object data3 = null)
+    public override void Raise(object data = null, object data2 = null, object data3 = null, object data4 = null)
     {
-        if (data is T == false || data2 is V == false)
-            Debug.LogError(string.Format("Invalid cast in events. Expected typse: {0} and {1}. Received Types: {2} and {3}", typeof(T).Name, typeof(V).Name, data.GetType().Name, data2.GetType().Name));
+      //  if (data is T == false || data2 is V == false)
+      //      Debug.LogError(string.Format("Invalid cast in events. Expected typse: {0} and {1}. Received Types: {2} and {3}", typeof(T).Name, typeof(V).Name, data.GetType().Name, data2.GetType().Name));
         OnRaise?.Invoke((T)data, (V)data2, (U)data3);
     }
 
@@ -241,6 +259,46 @@ public class EventController<T, V, U> : EventControllerBase
     }
 
     public virtual void RemoveSubscriber(Action<T, V, U> d)
+    {
+        subscribers.Remove(d);
+        OnRaise -= d;
+    }
+
+    public void UnhookSubscribers()
+    {
+        foreach (var subscriber in subscribers)
+        {
+            OnRaise -= subscriber;
+        }
+    }
+}
+
+public class EventController<T, V, U, X> : EventControllerBase
+{
+    private List<Action<T, V, U, X>> subscribers = new List<Action<T, V, U, X>>();
+    private event Action<T, V, U, X> OnRaise;
+
+    public override void Raise(object data = null, object data2 = null, object data3 = null, object data4 = null)
+    {
+     //  if (data is T == false || data2 is V == false)
+     //      Debug.LogError(string.Format("Invalid cast in events. Expected typse: {0} and {1}. Received Types: {2} and {3}", typeof(T).Name, typeof(V).Name, data.GetType().Name, data2.GetType().Name));
+        OnRaise?.Invoke((T)data, (V)data2, (U)data3, (X)data4);
+    }
+
+    public override void Add(Delegate callback)
+    {
+        if (callback is Action<T, V, U, X>)
+        {
+            subscribers.Add((Action<T, V, U, X>)callback);
+            OnRaise += (Action<T, V, U, X>)callback;
+        }
+        else
+        {
+            Debug.LogError("Cannot register with this callback");
+        }
+    }
+
+    public virtual void RemoveSubscriber(Action<T, V, U, X> d)
     {
         subscribers.Remove(d);
         OnRaise -= d;
@@ -278,10 +336,11 @@ public enum GameEventsEnum
     // game events
     EventUpgrade = 15,
     EventAnimalDeath = 16,    
-    EventLootDropped = 17,
-    EventGoldSpawned = 18,
-    EventGoldPickedUp = 19,
+   // EventLootDropped = 17,
+    EventLootSpawned = 18,
+    EventLootPickedUp = 19,
     EventGoldGained = 20,
+    EventLootGained = 31,
     EventShopItemPurchased = 21,
     EventAnimalSold = 22,
 
@@ -294,5 +353,6 @@ public enum GameEventsEnum
     EventGameRestart = 28,
 
     // misc
-    EventCreateDamageText = 29
+    EventCreateDamageText = 29,
+    EventLaunchItem = 30
 }

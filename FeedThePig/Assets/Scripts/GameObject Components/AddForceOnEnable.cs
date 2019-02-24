@@ -18,11 +18,12 @@ public class AddForceOnEnable : MonoBehaviour
     private void OnEnable()
     {
         var rb = GetComponent<Rigidbody2D>();
+       // var rotate = new Vector3(0, 0, Random.Range(rotationMin, rotationMax));
 
-        if(Random.Range(1, 100) > 50)
-            transform.Rotate(new Vector3(0, 0, Random.Range(rotationMin, rotationMax)));
+        if (Random.Range(1, 100) > 50)
+            transform.rotation = Quaternion.Euler(0, 0, Random.Range(rotationMin, rotationMax)); //  transform.Rotate(rotate);
         else
-            transform.Rotate(new Vector3(0, 0, -Random.Range(rotationMin, rotationMax)));
+            transform.rotation = Quaternion.Euler(0, 0, -Random.Range(rotationMin, rotationMax));
 
         rb.AddRelativeForce(transform.up * Random.Range(forceYMin, forceYMax));
     }

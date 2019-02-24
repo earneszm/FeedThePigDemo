@@ -7,6 +7,7 @@ using System.Reflection;
 
 [RequireComponent(typeof(EffectsManager))]
 [RequireComponent(typeof(SpawnController))]
+[RequireComponent(typeof(DroppableController))]
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; set; }
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
     private TimeController timeController;
     private EffectsManager effectsManager;
     private SpawnController spawnController;
+    private DroppableController droppableController;
 
     private void Awake()
     {
@@ -43,9 +45,11 @@ public class GameManager : MonoBehaviour
     {
         effectsManager = GetComponent<EffectsManager>();
         spawnController = GetComponent<SpawnController>();
+        droppableController = GetComponent<DroppableController>();
 
         timeController = new TimeController(gameData, DateTime.Now);
         timeController.TogglePause();
+
         StartCoroutine(LoadDataFromFile());
     }
 

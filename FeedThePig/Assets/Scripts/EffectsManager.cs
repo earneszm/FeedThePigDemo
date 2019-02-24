@@ -19,8 +19,7 @@ public class EffectsManager : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField]
     private MoveToTargetAndFade flyingItemPrefab;
-    [SerializeField]
-    private Gold goldDroppedPrefab;
+    
 
     [Header("Targets")]
     [SerializeField]
@@ -34,12 +33,13 @@ public class EffectsManager : MonoBehaviour
 
     private void Start()
     {
-        Events.Register<LootItem>(GameEventsEnum.EventLootDropped, (item) => { SetOverlayText(string.Format("Found item: {0}", item.Description), 2f); });
+        Events.Register<LootItem>(GameEventsEnum.EventLootGained, (item) => { SetOverlayText(string.Format("Found item: {0}", item.Description), 2f); });
         Events.Register<int>(GameEventsEnum.EventStartLevel, (number) => { SetOverlayText("Level " + number); });
         Events.Register<ShopItem, Transform>(GameEventsEnum.EventShopItemPurchased, (item, location) => { LaunchItem(location.position, item.Icon); });
 
-        Events.Register<int, Transform>(GameEventsEnum.EventGoldSpawned, (amount, location) => { CreateGoldAsLoot(amount, location); });
-        Events.Register<int, Vector3, Sprite>(GameEventsEnum.EventGoldPickedUp, OnGoldPickedUp);
+
+        Events.Register<Vector3, Sprite, LaunchTargetLocationEnum, Action>(GameEventsEnum.EventLaunchItem, LaunchItem);        
+        
         Events.Register(GameEventsEnum.EventGameOver, () => { RemoveAllActiveEffects(); });
         Events.Register<string, Transform, string>(GameEventsEnum.EventCreateDamageText, AddDamage);
     }
@@ -55,30 +55,13 @@ public class EffectsManager : MonoBehaviour
 
         activeEffects.Add(newEffect);
     }
-
-    public void CreateGoldAsLoot(int amount, Transform spawnLocation)
-    {
-        var gold = goldDroppedPrefab.Get<Gold>(spawnLocation.position, Quaternion.identity);
-        gold.SetGold(amount);
-
-        activeEffects.Add(gold);
-    }
-
-    private void OnGoldPickedUp(int amount, Vector3 position, Sprite icon)
-    {
-        Debug.Log("GainGold (OnGoldPickedUp): " + amount);
-        LaunchItem(position, icon, LaunchTargetLocationEnum.Gold, 
-            () => {
-                Debug.Log("GainGold (OnGoldPickedUp: callback): " + amount);
-                Events.Raise(amount, GameEventsEnum.EventGoldGained); });
-    }
-
+    
     public void SetOverlayText(string text, float fadeDuration = 3f)
     {
         overlayText.text = text;
         overlayText.gameObject.SetActive(true);
 
-        StartCoroutine(FadeObjectAfter(overlayText.gameObject, fadeDuration));
+        Events.StartCoroutine(Utils.FadeObjectAfter(overlayText.gameObject, fadeDuration));
     }
 
     public void AddDamage(string text, Transform position, string key)
@@ -87,6 +70,12 @@ public class EffectsManager : MonoBehaviour
             key = "default";
 
         textDamageManager.Add(text, position, key);
+    }
+
+    public static void AddEffect(EffectBase effect)
+    {
+        if (activeEffects.Contains(effect) == false)
+            activeEffects.Add(effect);
     }
 
     public static void RemoveEffect(EffectBase effect)
@@ -107,12 +96,7 @@ public class EffectsManager : MonoBehaviour
     }
 
 
-    private IEnumerator FadeObjectAfter(GameObject go, float fadeDuration)
-    {
-        yield return new WaitForSeconds(fadeDuration);
-
-        go.SetActive(false);
-    }
+    
 
     private RectTransform GetLaunchTarget(LaunchTargetLocationEnum target)
     {
