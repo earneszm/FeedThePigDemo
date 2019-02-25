@@ -38,12 +38,14 @@ public class DroppableController : MonoBehaviour
         {
             var loot = lootDroppedPrefab.Get<LootDroppable>(spawnLocation.position, Quaternion.identity);
             loot.SetLootItem(lootItem);
+            loot.StartDroppable();
             return loot;
         }
         else
         {
             var gold = goldDroppedPrefab.Get<GoldDroppable>(spawnLocation.position, Quaternion.identity);
             gold.SetGold(goldAmount);
+            gold.StartDroppable();
             return gold;
         }
     }

@@ -4,12 +4,27 @@ using UnityEngine;
 
 public abstract class Droppable : EffectBase
 {
-    [SerializeField]
-    protected float pickupAfterTime = 1f;    
+  //  [SerializeField]
+    private float pickupAfterTimeMin = 0.75f;
+   // [SerializeField]
+    private float pickupAfterTimeMax = 1.5f;
     [SerializeField]
     protected SpriteRenderer sr;
-    
+
+    // protected float pickupAfterTime { get { return Random.Range(pickupAfterTimeMin, pickupAfterTimeMax); } }
+    protected float pickupAfterTime = 1f;
+
+    private void Awake()
+    {
+        pickupAfterTime = Random.Range(pickupAfterTimeMin, pickupAfterTimeMax);
+    }
+
     private void OnEnable()
+    {
+      //  Events.StartCoroutine(LaunchItemAfterTime());
+    }
+
+    public void StartDroppable()
     {
         Events.StartCoroutine(LaunchItemAfterTime());
     }
