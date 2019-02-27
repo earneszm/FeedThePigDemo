@@ -54,4 +54,27 @@ public static class Utils
 
         go.SetActive(false);
     }
+
+    public static Color GetRarityColor(LootRarityEnum rarity)
+    {
+        if (GameManager.Instance.Config == null)
+            Debug.LogError("No config file found");
+
+        switch (rarity)
+        {
+            
+            case LootRarityEnum.UnCommon:
+                return GameManager.Instance.Config.UncommonItemColor;
+            case LootRarityEnum.Rare:
+                return GameManager.Instance.Config.RareItemColor;
+            case LootRarityEnum.Epic:
+                return GameManager.Instance.Config.EpicItemColor;
+            case LootRarityEnum.Legendary:
+                return GameManager.Instance.Config.LegendaryItemColor;
+            default:
+            case LootRarityEnum.NotApplicable:
+            case LootRarityEnum.Common:
+                return GameManager.Instance.Config.CommonItemColor;
+        }
+    }
 }

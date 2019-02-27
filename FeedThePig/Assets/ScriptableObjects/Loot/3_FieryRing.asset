@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 3_FieryRing
   m_EditorClassIdentifier: 
   Description: Fiery Ring
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 600a9af382e1c224988fbb010753f0b0, type: 3}
   DropWeight: 0
   onPickupGoTo: 0
   rarity: 3

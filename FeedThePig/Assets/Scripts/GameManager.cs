@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public bool IsTestMode;
 
     // Data
+    public Config Config;
     [SerializeField]
     private GameData gameData;
     [SerializeField]

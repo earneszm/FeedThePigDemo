@@ -22,4 +22,17 @@ public class LootItem : ScriptableObject
     {
         return GameConstants.GetRarityWeight(rarity) + DropWeight;
     }
+
+    public string GetStatsDescription()
+    {
+        var returnString = string.Format("{0}{1}{2}{3}{4}",
+            Damage > 0 ? ("Damage +" + Damage + ", ") : "",
+            CritChance > 0 ? ("CritChance +" + CritChance + ", ") : "",
+            CritDamage > 0 ? ("CritDamage +" + CritDamage + ", ") : "",
+            Armor > 0 ? ("Armor +" + Armor + ", ") : "",
+            Speed > 0 ? ("Speed +" + Speed + ", ") : "");
+
+        return returnString.Substring(0, returnString.Length - 2);
+
+    }
 }

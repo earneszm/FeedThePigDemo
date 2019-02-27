@@ -211,6 +211,12 @@ public class GameData : ScriptableObject, IGoldRate
         AddUpgrade(upgrade);
     }
 
+    private void GainLoot(LootItem item)
+    {
+        Loot.Add(item);
+        CalculateLootModifiers();
+    }
+
     
 
     #endregion
@@ -223,7 +229,7 @@ public class GameData : ScriptableObject, IGoldRate
         Events.Register<ShopItem, Transform>(GameEventsEnum.EventShopItemPurchased, OnShopItemPurchased);
         Events.Register(GameEventsEnum.EventAnimalSold, OnSellAnimal);
 
-        Events.Register<LootItem>(GameEventsEnum.EventLootGained,  (item) => { Loot.Add(item); CalculateLootModifiers(); });
+        Events.Register<LootItem>(GameEventsEnum.EventLootGained,  GainLoot);
         Events.Register<int>(GameEventsEnum.EventGoldGained,     (amount) => { Events.StartCoroutine(Utils.IncrementOverTime(amount, AddGold)); });
         Events.Register(GameEventsEnum.EventAnimalDeath,               () => { ResetLevelData(); CurrentLevel = 1; });
         Events.Register(GameEventsEnum.EventAdvanceLevel,              () => { CurrentLevel++; });
